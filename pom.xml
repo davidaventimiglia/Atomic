@@ -16,10 +16,10 @@
   </properties>
 
   <modules>
-    <module>../atomiccore</module>
-    <module>../atomicfilters</module>
-    <module>../atomicstandalone</module>
-    <module>../atomicwebapp</module>
+    <module>atomiccore</module>
+    <module>atomicfilters</module>
+    <module>atomicstandalone</module>
+    <module>atomicwebapp</module>
   </modules>
 
 </project>
