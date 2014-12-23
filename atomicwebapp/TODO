@@ -1,0 +1,9 @@
+# -*- mode: org; -*-
+
+#+STARTUP: hidestars
+#+STARTUP: odd
+#+STARTUP: 
+
+* DONE Fill out the README
+* TODO Use tomcat7-maven-plugin to build executable war/jar with embedded Tomcat7.
+* TODO Figure out how to parameterize the url of the deploy plugin.

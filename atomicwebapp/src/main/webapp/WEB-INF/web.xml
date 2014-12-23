@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="WebApp_ID" version="2.5">
+
+  <display-name>Atomic</display-name>
+  <description>Java EE Web Application Deployment of the Atomic Microservice</description>
+  <icon>
+    <small-icon>atomic16x16.png</small-icon>
+    <large-icon>atomic32x32.png</large-icon>
+  </icon>
+
+  <!-- <welcome-file-list> -->
+  <!--   <welcome-file>index.html</welcome-file> -->
+  <!-- </welcome-file-list> -->
+
+  <!-- <filter> -->
+  <!--   <filter-name>ClientSideCache</filter-name> -->
+  <!--   <filter-class>org.neptunestation.filterpack.filters.ClientSideCacheFilter</filter-class> -->
+  <!-- </filter> -->
+
+  <!-- <filter> -->
+  <!--   <filter-name>Compress</filter-name> -->
+  <!--   <filter-class>org.neptunestation.filterpack.filters.CompressionFilter</filter-class> -->
+  <!-- </filter> -->
+
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>ClientSideCache</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
+
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>Compress</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
+
+  <servlet>
+    <servlet-name>AtomicServlet</servlet-name>
+    <servlet-class>org.neptunestation.atomic.core.AtomicServlet</servlet-class>
+    <init-param>
+      <param-name>PROVIDER</param-name>
+      <param-value>org.neptunestation.atomic.core.BottomUpAtomicEdmProvider</param-value>
+    </init-param>
+    <init-param>
+      <param-name>DEBUG</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AtomicServlet</servlet-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+  </servlet-mapping>
+
+  <resource-ref>
+    <description>Atomic Data Source</description>
+    <res-ref-name>jdbc/AtomicDB</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
+
+</web-app>
