@@ -12,10 +12,6 @@
     <large-icon>atomic32x32.png</large-icon>
   </icon>
 
-  <!-- <welcome-file-list> -->
-  <!--   <welcome-file>index.html</welcome-file> -->
-  <!-- </welcome-file-list> -->
-
   <!-- <filter> -->
   <!--   <filter-name>ClientSideCache</filter-name> -->
   <!--   <filter-class>org.neptunestation.filterpack.filters.ClientSideCacheFilter</filter-class> -->
@@ -40,11 +36,21 @@
     <servlet-name>AtomicServlet</servlet-name>
     <servlet-class>org.neptunestation.atomic.core.AtomicServlet</servlet-class>
     <init-param>
-      <param-name>PROVIDER</param-name>
-      <param-value>org.neptunestation.atomic.core.BottomUpAtomicEdmProvider</param-value>
+      <param-name>DEBUG</param-name>
+      <param-value>true</param-value>
     </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>NoAuthAtomicServlet</servlet-name>
+    <servlet-class>org.neptunestation.atomic.core.AtomicServlet</servlet-class>
     <init-param>
       <param-name>DEBUG</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>NOAUTH</param-name>
       <param-value>true</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
@@ -53,6 +59,11 @@
   <servlet-mapping>
     <servlet-name>AtomicServlet</servlet-name>
     <url-pattern>/atomic.svc/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>NoAuthAtomicServlet</servlet-name>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </servlet-mapping>
 
   <resource-ref>
