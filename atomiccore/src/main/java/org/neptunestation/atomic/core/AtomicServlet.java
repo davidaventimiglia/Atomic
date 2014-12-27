@@ -8,15 +8,18 @@ import org.apache.olingo.odata2.api.*;
 import org.apache.olingo.odata2.core.servlet.*;
 
 public class AtomicServlet extends ODataServlet {
-    private Hashtable<String, String> params = new Hashtable<String, String> ();
+    public static String NOAUTH = "NOAUTH";
+
+    protected Hashtable<String, String> params = new Hashtable<String, String> ();
 
     @Override public void init (ServletConfig config) throws ServletException {
         params.put(ODataServiceFactory.FACTORY_LABEL, AtomicServiceFactory.class.getName());
         System.setProperty(AtomicServiceFactory.DEBUG, "" + config.getInitParameter(AtomicServiceFactory.DEBUG));
-        System.setProperty(AtomicEdmProvider.PROVIDER, "" + config.getInitParameter(AtomicEdmProvider.PROVIDER));
+        System.setProperty(AtomicEdmProvider.PROVIDER, config.getInitParameter(AtomicEdmProvider.PROVIDER)!=null ? config.getInitParameter(AtomicEdmProvider.PROVIDER) : BottomUpAtomicEdmProvider.class.getName());
         super.init(config);}
 
     @Override protected void service (final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if ("true".equalsIgnoreCase(getInitParameter(AtomicServlet.NOAUTH)+"")) {super.service(request, response); return;}
         if (request.getHeader("Authorization")!=null) {super.service(request, response); return;}
         response.setHeader("WWW-Authenticate", "BASIC realm = \"Atomic\"");
         response.sendError(response.SC_UNAUTHORIZED);}
