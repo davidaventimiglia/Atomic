@@ -86,4 +86,5 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
             Connection conn = getConn();
             DatabaseMetaData meta = conn.getMetaData();
             return (new AtomicRoot(meta)).getSchemas();}
-        catch (Throwable e) {throw new ODataException(e);}}}
+        // catch (Throwable e) {throw new ODataException(e);}}}
+        catch (Throwable e) {throw new RuntimeException("This should be catchable.");}}}

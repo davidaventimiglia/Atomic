@@ -40,6 +40,7 @@ public class AtomicServiceFactory extends ODataServiceFactory {
         String[] credentials = ctx.getRequestHeader("Authorization")!=null ? authorize(ctx.getRequestHeader("Authorization")) : new String[]{null, null};
         String username = credentials.length>=1 ? credentials[0] : null;
         String password = credentials.length>=2 ? credentials[1] : null;
+	System.err.println(String.format("credentials = %s", Arrays.asList(credentials)));
         try {
             Class c = Class.forName(System.getProperty(AtomicEdmProvider.PROVIDER));
             Constructor ctor = c.getDeclaredConstructor(Properties.class, String.class, String.class);
