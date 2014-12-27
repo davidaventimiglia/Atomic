@@ -17,14 +17,7 @@ public class AtomicServlet extends ODataServlet {
         super.init(config);}
 
     @Override protected void service (final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        try {
-	    super.service(request, response);
-	    return;
-	    // throw new Exception("This is complete bullshit.");
-	}
-	catch (RuntimeException t) {
-	    System.err.println("********************************************************************************");
-	}
+        if (request.getHeader("Authorization")!=null) {super.service(request, response); return;}
         response.setHeader("WWW-Authenticate", "BASIC realm = \"Atomic\"");
         response.sendError(response.SC_UNAUTHORIZED);}
 
