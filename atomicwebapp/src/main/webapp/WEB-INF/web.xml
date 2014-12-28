@@ -38,11 +38,6 @@
                  </xsl:stylesheet>]]>
       </param-value>
     </init-param>
-    <init-param>
-      <param-name>XSLT</param-name>
-      <!-- <param-value>http://localhost:8080/atomic-webapp/bootstrap.xsl</param-value> -->
-      <param-value>bootstrap.xsl</param-value>
-    </init-param>
   </filter>
 
   <!-- <filter-mapping> -->
