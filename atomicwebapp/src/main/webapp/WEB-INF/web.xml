@@ -27,7 +27,7 @@
     <filter-class>org.neptunestation.filterpack.filters.XMLTransformFilter</filter-class>
     <init-param>
       <param-name>XSLT</param-name>
-      <param-value>fooblitsky</param-value>
+      <param-value>http://localhost:8080/atomic-webapp/bootstrap.xsl</param-value>
     </init-param>
   </filter>
 
