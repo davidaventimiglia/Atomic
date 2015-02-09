@@ -12,14 +12,29 @@
     <large-icon>atomic32x32.png</large-icon>
   </icon>
 
-  <!-- <filter> -->
-  <!--   <filter-name>ClientSideCache</filter-name> -->
-  <!--   <filter-class>org.neptunestation.filterpack.filters.ClientSideCacheFilter</filter-class> -->
-  <!-- </filter> -->
+  <filter>
+    <filter-name>ClientSideCache</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.ClientSideCacheFilter</filter-class>
+  </filter>
 
   <filter>
     <filter-name>Compress</filter-name>
-    <filter-class>org.neptunestation.filterpack.filters.CompressionFilter</filter-class>
+    <filter-class>org.neptunestation.filterpack.filters.CompressionFilterExt</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>Cat1</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.BufferedFilter</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>Cat2</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.BufferedFilter</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>Cat3</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.BufferedFilter</filter-class>
   </filter>
 
   <filter>
@@ -40,19 +55,38 @@
     </init-param>
   </filter>
 
-  <!-- <filter-mapping> -->
-  <!--   <filter-name>ClientSideCache</filter-name> -->
-  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
-  <!-- </filter-mapping> -->
+  <filter-mapping>
+    <filter-name>Cat1</filter-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
+  </filter-mapping>
 
   <filter-mapping>
-    <filter-name>Compress</filter-name>
+    <filter-name>Cat2</filter-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>Cat3</filter-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>XMLTransform</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
 
   <!-- <filter-mapping> -->
-  <!--   <filter-name>XMLTransform</filter-name> -->
+  <!--   <filter-name>ClientSideCache</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
+
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>Compress</filter-name> -->
   <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
   <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
   <!-- </filter-mapping> -->
