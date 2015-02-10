@@ -74,7 +74,7 @@
   </filter-mapping>
 
   <filter-mapping>
-    <filter-name>Cat3</filter-name>
+    <filter-name>Compress</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
