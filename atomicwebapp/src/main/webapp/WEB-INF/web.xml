@@ -67,17 +67,17 @@
   <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
   <!-- </filter-mapping> -->
 
-  <!-- <filter-mapping> -->
-  <!--   <filter-name>Compress</filter-name> -->
-  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
-  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
-  <!-- </filter-mapping> -->
-
   <filter-mapping>
-    <filter-name>XMLTransform</filter-name>
+    <filter-name>Compress</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
+
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>XMLTransform</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
 
   <!-- <filter-mapping> -->
   <!--   <filter-name>ClientSideCache</filter-name> -->
