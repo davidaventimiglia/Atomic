@@ -73,6 +73,15 @@
     </init-param>
   </filter>
 
+  <filter>
+    <filter-name>XSLTStyleSheetInject</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.XSLTStyleSheetInjectorFilter</filter-class>
+    <init-param>
+      <param-name>XSL_URL</param-name>
+      <param-value>http://localhost:8080/atomic-webapp/atomic.xsl</param-value>
+    </init-param>
+  </filter>
+
   <!-- <filter-mapping> -->
   <!--   <filter-name>ClientSideCache</filter-name> -->
   <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
@@ -104,7 +113,7 @@
   </filter-mapping>
 
   <filter-mapping>
-    <filter-name>XMLTransform</filter-name>
+    <filter-name>XSLTStyleSheetInject</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
