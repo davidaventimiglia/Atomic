@@ -50,6 +50,12 @@
   </xsl:template>
 
   <xsl:template match="a:entry">
+    <table border="1">
+      <xsl:apply-templates select="a:content/m:properties"/>
+    </table>
+  </xsl:template>
+
+  <xsl:template match="a:feed/a:entry">
     <tr>
       <td><xsl:value-of select="a:id"/></td>
       <xsl:apply-templates select="a:content/m:properties"/>
@@ -57,6 +63,10 @@
   </xsl:template>
 
   <xsl:template match="d:*">
+    <tr><td><xsl:apply-templates/></td></tr>
+  </xsl:template>
+
+  <xsl:template match="a:feed/a:entry/a:content/m:properties/d:*">
     <td><xsl:apply-templates/></td>
   </xsl:template>
 
