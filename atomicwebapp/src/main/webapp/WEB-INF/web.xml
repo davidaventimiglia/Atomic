@@ -47,11 +47,11 @@
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
 
-  <!-- <filter-mapping> -->
-  <!--   <filter-name>XSLTStyleSheetInject</filter-name> -->
-  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
-  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
-  <!-- </filter-mapping> -->
+  <filter-mapping>
+    <filter-name>XSLTStyleSheetInject</filter-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
+  </filter-mapping>
 
   <servlet>
     <servlet-name>AtomicServlet</servlet-name>
