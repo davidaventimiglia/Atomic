@@ -14,6 +14,11 @@ public abstract class AtomicEdmProvider extends EdmProvider {
     protected String password = null;
     protected Properties params = null;
 
+    public Boolean parseYesNo (String v) {
+        if (v==null) return new Boolean(false);
+        if (v.equalsIgnoreCase("YES")) return new Boolean(true);
+        return false;}
+
     public AtomicEdmProvider (Properties params, String username, String password) {
         super();
         if (params==null) throw new IllegalArgumentException("The 'params' argument is required.");
@@ -46,7 +51,7 @@ public abstract class AtomicEdmProvider extends EdmProvider {
     protected List<Property> makeProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
         List<Property> properties = new ArrayList<Property>();
         ResultSet r = meta.getColumns(catalog, schema, table, null);
-        while (r.next()) properties.add(makeProperty(catalog, schema, table, r.getString("COLUMN_NAME"), r.getInt("DATA_TYPE"), r.getString("COLUMN_DEF"), new Integer(r.getString("COLUMN_SIZE")), new Boolean(r.getString("IS_NULLABLE")), new Integer(r.getString("DECIMAL_DIGITS")), new Integer(r.getString("DECIMAL_DIGITS"))));
+        while (r.next()) properties.add(makeProperty(catalog, schema, table, r.getString("COLUMN_NAME"), r.getInt("DATA_TYPE"), r.getString("COLUMN_DEF"), new Integer(r.getString("COLUMN_SIZE")), parseYesNo(r.getString("IS_NULLABLE")), new Integer(r.getString("DECIMAL_DIGITS")), new Integer(r.getString("DECIMAL_DIGITS"))));
         r.close();
         return properties;}
 
