@@ -43,31 +43,62 @@
     </li>
   </xsl:template>
 
+  <!-- Feed -->
+
   <xsl:template match="a:feed">
     <table border="1">
-      <xsl:apply-templates select="a:entry"/>
+      <caption><xsl:value-of select="a:title"/></caption>
+      <xsl:apply-templates select="a:entry[1]" mode="table-header"/>
+      <xsl:apply-templates select="a:entry" mode="table-data"/>
     </table>
   </xsl:template>
 
-  <xsl:template match="a:entry">
-    <table border="1">
-      <xsl:apply-templates select="a:content/m:properties"/>
-    </table>
-  </xsl:template>
-
-  <xsl:template match="a:feed/a:entry">
+  <xsl:template match="a:entry" mode="table-header">
     <tr>
-      <td><xsl:value-of select="a:id"/></td>
-      <xsl:apply-templates select="a:content/m:properties"/>
+      <xsl:apply-templates select="a:content/m:properties" mode="table-header"/>
     </tr>
   </xsl:template>
 
-  <xsl:template match="d:*">
-    <tr><td><xsl:apply-templates/></td></tr>
+  <xsl:template match="d:*" mode="table-header">
+    <td><xsl:value-of select="local-name()"/></td>
   </xsl:template>
 
-  <xsl:template match="a:feed/a:entry/a:content/m:properties/d:*">
-    <td><xsl:apply-templates/></td>
+  <xsl:template match="a:entry" mode="table-data">
+    <tr>
+      <!-- <td> -->
+      <!--   <a href="{a:id}">Link</a> -->
+      <!-- </td> -->
+      <xsl:apply-templates select="a:content/m:properties" mode="table-data"/>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="/a:feed/a:entry/a:content/m:properties/d:*[1]" mode="table-data">
+    <td><em><xsl:apply-templates/></em></td>
+  </xsl:template>
+
+  <xsl:template match="/a:feed/a:entry/a:content/m:properties/d:*" mode="table-data">
+    <td><em><a href="{../../link/@href}"><xsl:apply-templates/></a></em></td>
+  </xsl:template>
+
+  <!-- Entry Detail -->
+
+  <xsl:template match="/a:entry">
+    <form action="{link/@href}">
+      <table border="1">
+        <xsl:apply-templates select="a:content/m:properties" mode="entry-detail"/>
+      </table>
+    </form>
+  </xsl:template>
+
+  <xsl:template match="d:*" mode="entry-detail">
+    <tr>
+      <td>
+        <xsl:value-of select="local-name()"/>
+      </td>
+      <td>
+        <input type="text" name="{name()}" value="{text()}"/>
+      </td>
+    </tr>
   </xsl:template>
 
 </xsl:stylesheet> 
