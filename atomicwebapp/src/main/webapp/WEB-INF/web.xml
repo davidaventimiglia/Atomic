@@ -22,6 +22,27 @@
   </filter>
 
   <filter>
+    <filter-name>DisableFirefoxRSSReader</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.TransformResponseHeaderFilter</filter-class>
+    <init-param>
+      <param-name>TRIGGER_HEADER</param-name>
+      <param-value>User-Agent</param-value>
+    </init-param>
+    <init-param>
+      <param-name>TRIGGER_HEADER_REGEXP</param-name>
+      <param-value>.*Mozilla.*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>TARGET_HEADER_NAME</param-name>
+      <param-value>Content-Type</param-value>
+    </init-param>
+    <init-param>
+      <param-name>TARGET_HEADER_VALUE</param-name>
+      <param-value>application/xml</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
     <filter-name>Compress</filter-name>
     <filter-class>org.neptunestation.filterpack.filters.CompressionFilter</filter-class>
   </filter>
@@ -49,6 +70,12 @@
 
   <filter-mapping>
     <filter-name>XSLTStyleSheetInject</filter-name>
+    <url-pattern>/atomic.svc/*</url-pattern>
+    <url-pattern>/noauth.atomic.svc/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>DisableFirefoxRSSReader</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
