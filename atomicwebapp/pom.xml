@@ -11,6 +11,12 @@
   <name>AtomicWebapp</name>
   <url>http://www.neptunestation.org/atomic-webapp</url>
 
+  <parent>
+    <groupId>org.neptunestation</groupId>
+    <artifactId>atomic</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
