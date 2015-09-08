@@ -13,23 +13,34 @@ import org.neptunestation.filterpack.filters.*;
 
 public class Atomic {
     public static void main (String[] args) throws Exception {
+	boolean debug = false;
 	try {
 	    LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
 	    
 	    String jdbcDriver = System.getProperty("jdbc-driver");
 	    String jdbcUrl = System.getProperty("jdbc-url");
-	    String httpPort = System.getProperty("http-port");
-	    String contextPath = System.getProperty("context-path");
 
-	    System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic_splash.txt")).useDelimiter("\\Z").next().replace("$PORT$", httpPort));
-	    System.out.println("jdbc-driver: " + jdbcDriver);
-	    System.out.println("jdbc-url: " + jdbcUrl);
-	    System.out.println("http-port: " + httpPort);
-	    System.out.println("context-path: " + contextPath);
+	    if (jdbcDriver==null || jdbcUrl==null)
+		System.out.println("Usage:\n" +
+				   "\n" +
+				   "jdbcDriver - JDBC driver class name (default: none)\n" +
+				   "jdbcUrl - JDBC URL\n (default: none)" +
+				   "httpPort - HTTP Port (default: 80)\n" +
+				   "contextPath - URL Context Path (default: '')\n" +
+				   "debug - Debug output in [true, false] (default: false)\n");
+
+	    int httpPort = 80;
+	    try {httpPort = Integer.parseInt(System.getProperty("http-port")==null ? "80" : System.getProperty("http-port"));}
+	    catch (Throwable t) {System.err.println("The 'http-port' system property must be an integer.");}
+
+	    String contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
+
+	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
+	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
 	    Tomcat tomcat = new Tomcat();
             tomcat.enableNaming();
-	    tomcat.setPort(Integer.parseInt(httpPort));
+	    tomcat.setPort(httpPort);
 
 	    Context ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
 
@@ -97,8 +108,13 @@ public class Atomic {
 	    ctx.addFilterMap(addXSLStyleSheetMap);
 	    
 	    tomcat.start();
+
+	    System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic_splash.txt")).useDelimiter("\\Z").next().replace("$PORT$", httpPort+""));
+	    System.out.println("jdbc-driver: " + jdbcDriver);
+	    System.out.println("jdbc-url: " + jdbcUrl);
+	    System.out.println("http-port: " + httpPort);
+	    System.out.println("context-path: " + contextPath);
+	    System.out.println("debug: " + debug);
+
 	    tomcat.getServer().await();}
-	catch (Exception t) {
-	    t.printStackTrace(System.err);
-	    System.out.println("Atomic has encountered a fatal error and is shutting down.");
-	    System.exit(1);}}}
+	catch (Exception t) {if (debug) t.printStackTrace(System.err);}}}
