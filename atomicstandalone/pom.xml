@@ -62,7 +62,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
       <version>7.0.52</version>
-      <scope>provided</scope>
+      <!-- <scope>provided</scope> -->
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -82,6 +82,11 @@
     <dependency>
       <groupId>org.neptunestation</groupId>
       <artifactId>atomic-core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.neptunestation</groupId>
+      <artifactId>filter-pack</artifactId>
       <version>1.0.0</version>
     </dependency>
   </dependencies>
