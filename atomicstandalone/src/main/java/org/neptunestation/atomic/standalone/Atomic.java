@@ -2,6 +2,7 @@ package org.neptunestation.atomic.standalone;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.apache.catalina.*;
@@ -13,16 +14,19 @@ import org.neptunestation.filterpack.filters.*;
 public class Atomic {
     public static void main (String[] args) throws Exception {
 	try {
+	    LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
+	    
 	    String jdbcDriver = System.getProperty("jdbc-driver");
 	    String jdbcUrl = System.getProperty("jdbc-url");
 	    String httpPort = System.getProperty("http-port");
 	    String contextPath = System.getProperty("context-path");
 
-	    System.out.println("jdbc-driver = " + jdbcDriver);
-	    System.out.println("jdbc-url = " + jdbcUrl);
-	    System.out.println("http-port = " + httpPort);
-	    System.out.println("context-path = " + contextPath);
 	    System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic_splash.txt")).useDelimiter("\\Z").next().replace("$PORT$", httpPort));
+	    System.out.println("jdbc-driver: " + jdbcDriver);
+	    System.out.println("jdbc-url: " + jdbcUrl);
+	    System.out.println("http-port: " + httpPort);
+	    System.out.println("context-path: " + contextPath);
+
 	    Tomcat tomcat = new Tomcat();
             tomcat.enableNaming();
 	    tomcat.setPort(Integer.parseInt(httpPort));
