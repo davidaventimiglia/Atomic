@@ -10,3 +10,4 @@ target
 *.orig
 *.db
 *.war
+*.log
