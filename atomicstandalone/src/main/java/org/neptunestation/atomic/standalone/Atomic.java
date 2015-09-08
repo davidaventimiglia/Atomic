@@ -20,14 +20,16 @@ public class Atomic {
 	    String jdbcDriver = System.getProperty("jdbc-driver");
 	    String jdbcUrl = System.getProperty("jdbc-url");
 
-	    if (jdbcDriver==null || jdbcUrl==null)
-		System.out.println("Usage:\n" +
+	    if (jdbcDriver==null || jdbcUrl==null) {
+		System.out.println("\n" +
+				   "ATOMIC (Usage):\n" +
 				   "\n" +
 				   "jdbcDriver - JDBC driver class name (default: none)\n" +
-				   "jdbcUrl - JDBC URL\n (default: none)" +
+				   "jdbcUrl - JDBC URL (default: none)\n" +
 				   "httpPort - HTTP Port (default: 80)\n" +
 				   "contextPath - URL Context Path (default: '')\n" +
 				   "debug - Debug output in [true, false] (default: false)\n");
+		System.exit(1);}
 
 	    int httpPort = 80;
 	    try {httpPort = Integer.parseInt(System.getProperty("http-port")==null ? "80" : System.getProperty("http-port"));}
