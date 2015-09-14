@@ -67,7 +67,8 @@ public class Atomic {
             ctx.getNamingResources().addResource(resource);
 
 	    Tomcat.addServlet(ctx, "atomic", new AtomicServlet());
-	    ctx.addServletMapping("/atomic.svc/*", "atomic");
+	    ctx.addServletMapping("/atomic/*", "atomic");
+	    ctx.addServletMapping("/atomic.debug/*", "atomic");
 
 	    Tomcat.addServlet(ctx, "xslt", new  HttpServlet() {
 		    protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -94,19 +95,19 @@ public class Atomic {
 	    ctx.addFilterDef(disableFirefoxFeedReader);
 	    FilterMap addClientCachingMap = new FilterMap();
 	    addClientCachingMap.setFilterName("addClientCaching");
-	    addClientCachingMap.addURLPattern("/atomic.svc/*");
+	    addClientCachingMap.addURLPattern("/atomic/*");
 	    ctx.addFilterMap(addClientCachingMap);
 	    FilterMap compressResponseMap = new FilterMap();
 	    compressResponseMap.setFilterName("compressResponse");
-	    compressResponseMap.addURLPattern("/atomic.svc/*");
+	    compressResponseMap.addURLPattern("/atomic/*");
 	    ctx.addFilterMap(compressResponseMap);
 	    FilterMap disableFirefoxFeedReaderMap = new FilterMap();
 	    disableFirefoxFeedReaderMap.setFilterName("disableFirefoxFeedReader");
-	    disableFirefoxFeedReaderMap.addURLPattern("/atomic.svc/*");
+	    disableFirefoxFeedReaderMap.addURLPattern("/atomic/*");
 	    ctx.addFilterMap(disableFirefoxFeedReaderMap);
 	    FilterMap addXSLStyleSheetMap = new FilterMap();
 	    addXSLStyleSheetMap.setFilterName("addXSLStyleSheet");
-	    addXSLStyleSheetMap.addURLPattern("/atomic.svc/*");
+	    addXSLStyleSheetMap.addURLPattern("/atomic/*");
 	    ctx.addFilterMap(addXSLStyleSheetMap);
 	    
 	    tomcat.start();
