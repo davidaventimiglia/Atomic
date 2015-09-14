@@ -55,29 +55,30 @@
 
   <xsl:template match="a:entry" mode="table-header">
     <tr>
+      <td><strong>id</strong></td>
       <xsl:apply-templates select="a:content/m:properties" mode="table-header"/>
     </tr>
   </xsl:template>
 
   <xsl:template match="d:*" mode="table-header">
-    <td><xsl:value-of select="local-name()"/></td>
+    <td><strong><xsl:value-of select="local-name()"/></strong></td>
   </xsl:template>
 
   <xsl:template match="a:entry" mode="table-data">
     <tr>
-      <!-- <td> -->
-      <!--   <a href="{a:id}">Link</a> -->
-      <!-- </td> -->
+      <td>
+        <a href="{a:link/@href}"><xsl:value-of select="a:id"/></a>
+      </td>
       <xsl:apply-templates select="a:content/m:properties" mode="table-data"/>
     </tr>
   </xsl:template>
 
   <xsl:template match="/a:feed/a:entry/a:content/m:properties/d:*[1]" mode="table-data">
-    <td><em><xsl:apply-templates/></em></td>
+    <td><xsl:apply-templates/></td>
   </xsl:template>
 
   <xsl:template match="/a:feed/a:entry/a:content/m:properties/d:*" mode="table-data">
-    <td><em><a href="{../../link/@href}"><xsl:apply-templates/></a></em></td>
+    <td><xsl:apply-templates/></td>
   </xsl:template>
 
   <!-- Entry Detail -->
