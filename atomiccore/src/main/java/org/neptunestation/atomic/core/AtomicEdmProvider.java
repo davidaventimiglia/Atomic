@@ -14,7 +14,7 @@ public abstract class AtomicEdmProvider extends EdmProvider {
     protected String password = null;
     protected Properties params = null;
 
-    public Boolean parseYesNo (String v) {
+    public static Boolean parseYesNo (String v) {
         if (v==null) return new Boolean(false);
         if (v.equalsIgnoreCase("YES")) return new Boolean(true);
         return false;}
@@ -120,6 +120,7 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         r.close();
         if (keyProperties.isEmpty()) return makePseudoKeyProperties(meta, catalog, schema, table);
         return keyProperties;}
+
     protected List<PropertyRef> makePseudoKeyProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
         List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
         ResultSet r = meta.getColumns(null, schema, table, null);
