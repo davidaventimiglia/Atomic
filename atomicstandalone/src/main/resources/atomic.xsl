@@ -47,7 +47,7 @@
 
   <xsl:template match="a:feed">
     <table border="1">
-      <caption><xsl:value-of select="a:title"/></caption>
+      <caption><strong><xsl:value-of select="a:title"/></strong></caption>
       <xsl:apply-templates select="a:entry[1]" mode="table-header"/>
       <xsl:apply-templates select="a:entry" mode="table-data"/>
     </table>
@@ -55,7 +55,7 @@
 
   <xsl:template match="a:entry" mode="table-header">
     <tr>
-      <td><strong>id</strong></td>
+      <td><strong>Select</strong></td>
       <xsl:apply-templates select="a:content/m:properties" mode="table-header"/>
     </tr>
   </xsl:template>
@@ -67,7 +67,7 @@
   <xsl:template match="a:entry" mode="table-data">
     <tr>
       <td>
-        <a href="{a:link/@href}"><xsl:value-of select="a:id"/></a>
+        <a href="{a:link/@href}">Link</a>
       </td>
       <xsl:apply-templates select="a:content/m:properties" mode="table-data"/>
     </tr>
@@ -88,6 +88,8 @@
       <table border="1">
         <xsl:apply-templates select="a:content/m:properties" mode="entry-detail"/>
       </table>
+      <input type="hidden" name="method" value="put"/>
+      <input type="submit" value="Submit"/>
     </form>
   </xsl:template>
 
