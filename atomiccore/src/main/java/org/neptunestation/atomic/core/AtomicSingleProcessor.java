@@ -116,18 +116,18 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
         EntityProviderReadProperties properties = EntityProviderReadProperties.init().mergeSemantic(false).build();
         ODataEntry entry = EntityProvider.readEntry(requestContentType, uriInfo.getStartEntitySet(), content, properties);
         Map<String, Object> data = entry.getProperties();
-        String sep = null;
+        String sep = "";
         StringBuilder cols = new StringBuilder();
         StringBuilder vals = new StringBuilder();
         for (Map.Entry e : data.entrySet()) {
             cols.append(sep).append(e.getKey());
-            vals.append(sep).append(e.getValue());
-            if (sep==null) sep = ",";}
-        String query = String.format("insert int %s (%s) values (%s)");
-        try (Connection c = getConn();
-             Statement s = c.createStatement()) {
-                s.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-                try (ResultSet r = s.getGeneratedKeys()) {if (r.next()) data.put("foo", r.getString(1));} catch (Throwable t) {throw new ODataException(t);}}
+            vals.append(sep).append(String.format("'%s'", e.getValue()));
+            if (sep=="") sep = ",";}
+        String query = String.format("insert into %s (%s) values (%s)", uriInfo.getStartEntitySet().getName(), cols, vals);
+	System.err.println(query);
+        try (Connection c = getConn(); Statement s = c.createStatement()) {
+	    s.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+	    try (ResultSet r = s.getGeneratedKeys()) {if (r.next()) data.put("foo", r.getString(1));} catch (Throwable t) {throw new ODataException(t);}}
         catch (Throwable t) {throw new ODataException(t);}
         //serialize the entry, Location header is set by OData Library
         return EntityProvider.writeEntry(contentType, uriInfo.getStartEntitySet(), entry.getProperties(), EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build());}
@@ -150,9 +150,8 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
         // return ODataResponse.status(HttpStatusCodes.NO_CONTENT).build();}
 
     protected int destroyEntity (DeleteUriInfo uriInfo, String contentType) throws ODataException {
-        try (Connection c = getConn();
-             Statement s = c.createStatement();) {
-                return s.executeUpdate(String.format("delete from %s where %s = %s", uriInfo.getStartEntitySet().getName(), uriInfo.getKeyPredicates().get(0).getProperty().getName(), uriInfo.getKeyPredicates().get(0).getLiteral()));}
+        try (Connection c = getConn(); Statement s = c.createStatement();) {
+	    return s.executeUpdate(String.format("delete from %s where %s = %s", uriInfo.getStartEntitySet().getName(), uriInfo.getKeyPredicates().get(0).getProperty().getName(), uriInfo.getKeyPredicates().get(0).getLiteral()));}
         catch (Throwable e) {throw new ODataException(e);}}
 
     @Override public ODataResponse deleteEntity (DeleteUriInfo uriInfo, String contentType) throws ODataException {
