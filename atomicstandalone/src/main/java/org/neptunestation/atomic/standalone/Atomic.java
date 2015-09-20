@@ -37,6 +37,7 @@ public class Atomic {
 
 	    String contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
 
+
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
@@ -93,6 +94,11 @@ public class Atomic {
 	    disableFirefoxFeedReader.setFilterName("disableFirefoxFeedReader");
 	    disableFirefoxFeedReader.setFilter(new MozillaWebFeedSpoofingFilter());
 	    ctx.addFilterDef(disableFirefoxFeedReader);
+	    // FilterDef convertPut = new FilterDef();
+	    // convertPut.setFilterName("convertPut");
+	    // convertPut.setFilter(new RequestHeaderRewrite());
+	    // ctx.addFilterDef(convertPut);
+
 	    FilterMap addClientCachingMap = new FilterMap();
 	    addClientCachingMap.setFilterName("addClientCaching");
 	    addClientCachingMap.addURLPattern("/atomic/*");
@@ -109,6 +115,10 @@ public class Atomic {
 	    addXSLStyleSheetMap.setFilterName("addXSLStyleSheet");
 	    addXSLStyleSheetMap.addURLPattern("/atomic/*");
 	    ctx.addFilterMap(addXSLStyleSheetMap);
+	    // FilterMap convertPutMap = new FilterMap();
+	    // convertPutMap.setFilterName("convertPut");
+	    // convertPutMap.addURLPattern("/atomic/*");
+	    // ctx.addFilterMap(convertPutMap);
 	    
 	    tomcat.start();
 
