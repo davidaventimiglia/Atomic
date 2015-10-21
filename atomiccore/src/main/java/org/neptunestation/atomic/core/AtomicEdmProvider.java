@@ -27,8 +27,7 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         this.password = password;}
 
     protected Connection getConn () throws NamingException, SQLException {
-        if (username==null && password==null) return getDataSource().getConnection();
-        return getDataSource().getConnection(username, password);}
+	return username==null && password==null ? getDataSource().getConnection() : getDataSource().getConnection(username, password);}
 
     protected DataSource getDataSource () throws NamingException, SQLException {
         return ((DataSource)((Context)(new InitialContext()).lookup("java:comp/env")).lookup("jdbc/AtomicDB"));}
@@ -39,7 +38,7 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         e.setDocumentation(makeDocumentation(meta, catalog, schema, table));
         e.setProperties(makeProperties(meta, catalog, schema, table));
         e.setKey(makeKey(meta, catalog, schema, table));
-        // e.setNavigationProperties(makeNavigationProperties(meta, catalog, schema, table));
+        e.setNavigationProperties(makeNavigationProperties(meta, catalog, schema, table));
         return e;}
 
     protected Documentation makeDocumentation (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
@@ -49,11 +48,10 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         return d;}
 
     protected List<Property> makeProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
-        List<Property> properties = new ArrayList<Property>();
-        ResultSet r = meta.getColumns(catalog, schema, table, null);
-        while (r.next()) properties.add(makeProperty(catalog, schema, table, r.getString("COLUMN_NAME"), r.getInt("DATA_TYPE"), r.getString("COLUMN_DEF"), new Integer(r.getString("COLUMN_SIZE")), parseYesNo(r.getString("IS_NULLABLE")), new Integer(r.getString("DECIMAL_DIGITS")), new Integer(r.getString("DECIMAL_DIGITS"))));
-        r.close();
-        return properties;}
+	try (ResultSet r = meta.getColumns(catalog, schema, table, null)) {
+	    List<Property> properties = new ArrayList<Property>();
+	    while (r.next()) properties.add(makeProperty(catalog, schema, table, r.getString("COLUMN_NAME"), r.getInt("DATA_TYPE"), r.getString("COLUMN_DEF"), new Integer(r.getString("COLUMN_SIZE")), parseYesNo(r.getString("IS_NULLABLE")), new Integer(r.getString("DECIMAL_DIGITS")), new Integer(r.getString("DECIMAL_DIGITS"))));
+	    return properties;}}
 
     protected Property makeProperty (String catalog, String schema, String table, String columnName, int dataType, String defaultValue, Integer maxLength, Boolean nullable, Integer precision, Integer scale) {
         SimpleProperty p = new SimpleProperty();
@@ -63,8 +61,8 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         f.setDefaultValue(defaultValue);
         f.setMaxLength(maxLength);
         f.setNullable(nullable);
-        // f.setPrecision(precision);
-        // f.setScale(scale);
+        f.setPrecision(precision);
+        f.setScale(scale);
         p.setFacets(f);
         return p;}
 
@@ -114,19 +112,17 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         return k;}
 
     protected List<PropertyRef> makeKeyProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
-        List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
-        ResultSet r = meta.getPrimaryKeys(null, schema, table);
-        while (r.next()) keyProperties.add(makeKeyProperty(catalog, schema, table, r.getString("COLUMN_NAME")));
-        r.close();
-        if (keyProperties.isEmpty()) return makePseudoKeyProperties(meta, catalog, schema, table);
-        return keyProperties;}
+	try (ResultSet r = meta.getPrimaryKeys(null, schema, table)) {
+	    List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
+	    while (r.next()) keyProperties.add(makeKeyProperty(catalog, schema, table, r.getString("COLUMN_NAME")));
+	    if (keyProperties.isEmpty()) return makePseudoKeyProperties(meta, catalog, schema, table);
+	    return keyProperties;}}
 
     protected List<PropertyRef> makePseudoKeyProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
-        List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
-        ResultSet r = meta.getColumns(null, schema, table, null);
-        while (r.next()) keyProperties.add(makeKeyProperty(catalog, schema, table, r.getString("COLUMN_NAME")));
-        r.close();
-        return keyProperties;}
+	try (ResultSet r = meta.getColumns(null, schema, table, null)) {
+	    List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
+	    while (r.next()) keyProperties.add(makeKeyProperty(catalog, schema, table, r.getString("COLUMN_NAME")));
+	    return keyProperties;}}
 
     protected PropertyRef makeKeyProperty (String catalog, String schema, String table, String columnName) {
         PropertyRef p = new PropertyRef();
