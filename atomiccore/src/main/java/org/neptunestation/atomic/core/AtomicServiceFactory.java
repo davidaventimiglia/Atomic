@@ -16,7 +16,7 @@ public class AtomicServiceFactory extends ODataServiceFactory {
         if (s==null) throw new IllegalArgumentException("The decode string is required.");
         return new String(DatatypeConverter.parseBase64Binary(s));}
 
-    protected String[] authorize (String header) throws ODataException {
+    protected String[] parseAuthorizationHeader (String header) throws ODataException {
         if (header.split("\\s+").length<2) throw new ODataException("Authorization header is malformed.");
         if (!header.split("\\s+")[0].equalsIgnoreCase("BASIC")) throw new ODataException("Authorizaton header is not BASIC.");
         try {decode(header.split("\\s+")[1]);} catch (Exception e) {throw new ODataException("Authorization credentials are not Base64 encoded.");}
@@ -37,7 +37,7 @@ public class AtomicServiceFactory extends ODataServiceFactory {
         return (T) super.getCallback(callbackInterface);}
 
     @Override public ODataService createService (ODataContext ctx) throws ODataException {
-        String[] credentials = ctx.getRequestHeader("Authorization")!=null ? authorize(ctx.getRequestHeader("Authorization")) : new String[]{null, null};
+        String[] credentials = ctx.getRequestHeader("Authorization")!=null ? parseAuthorizationHeader(ctx.getRequestHeader("Authorization")) : new String[]{null, null};
         String username = credentials.length>=1 ? credentials[0] : null;
         String password = credentials.length>=2 ? credentials[1] : null;
         try {
