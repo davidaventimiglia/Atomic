@@ -19,7 +19,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
         private Map<String, AtomicSchema> schemas = new HashMap<>();
         public AtomicRoot (DatabaseMetaData m) throws NamingException, SQLException {
             for (ResultSet r = m.getTables(null, null, null, null); r.next();) addSchema(m, r);
-            for (Schema s : getSchemas()) if (!s.getEntityContainers().isEmpty()) s.getEntityContainers().get(0).setDefaultEntityContainer(true);}
+	    for (Schema s : getSchemas()) for (EntityContainer ec : s.getEntityContainers()) {ec.setDefaultEntityContainer(true); break;}}
         public AtomicSchema addSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
             if (schemas.get(""+r.getString(1))==null) {
                 AtomicSchema s = new AtomicSchema(m, r);
