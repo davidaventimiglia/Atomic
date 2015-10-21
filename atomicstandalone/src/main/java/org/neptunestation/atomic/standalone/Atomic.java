@@ -37,7 +37,6 @@ public class Atomic {
 
 	    String contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
 
-
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
@@ -102,14 +101,17 @@ public class Atomic {
 	    FilterMap addClientCachingMap = new FilterMap();
 	    addClientCachingMap.setFilterName("addClientCaching");
 	    addClientCachingMap.addURLPattern("/atomic/*");
+	    addClientCachingMap.addURLPattern("/atomic.debug/*");
 	    ctx.addFilterMap(addClientCachingMap);
 	    FilterMap compressResponseMap = new FilterMap();
 	    compressResponseMap.setFilterName("compressResponse");
 	    compressResponseMap.addURLPattern("/atomic/*");
+	    compressResponseMap.addURLPattern("/atomic.debug/*");
 	    ctx.addFilterMap(compressResponseMap);
 	    FilterMap disableFirefoxFeedReaderMap = new FilterMap();
 	    disableFirefoxFeedReaderMap.setFilterName("disableFirefoxFeedReader");
 	    disableFirefoxFeedReaderMap.addURLPattern("/atomic/*");
+	    disableFirefoxFeedReaderMap.addURLPattern("/atomic.debug/*");
 	    ctx.addFilterMap(disableFirefoxFeedReaderMap);
 	    FilterMap addXSLStyleSheetMap = new FilterMap();
 	    addXSLStyleSheetMap.setFilterName("addXSLStyleSheet");
