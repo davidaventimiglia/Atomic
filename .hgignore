@@ -11,3 +11,9 @@ target
 *.db
 *.war
 *.log
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+scratch.*
+scratch*
