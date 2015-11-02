@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 import org.apache.catalina.*;
 import org.apache.catalina.deploy.*;
 import org.apache.catalina.startup.*;
+import org.apache.catalina.valves.*;
 import org.neptunestation.atomic.core.*;
 import org.neptunestation.filterpack.filters.*;
 
@@ -15,8 +16,6 @@ public class Atomic {
     public static void main (String[] args) throws Exception {
 	boolean debug = false;
 	try {
-	    LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
-	    
 	    String jdbcDriver = System.getProperty("jdbc-driver");
 	    String jdbcUrl = System.getProperty("jdbc-url");
 
@@ -43,6 +42,7 @@ public class Atomic {
 	    Tomcat tomcat = new Tomcat();
             tomcat.enableNaming();
 	    tomcat.setPort(httpPort);
+	    tomcat.setSilent(true);
 
 	    Context ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
 
@@ -121,6 +121,9 @@ public class Atomic {
 	    // convertPutMap.setFilterName("convertPut");
 	    // convertPutMap.addURLPattern("/atomic/*");
 	    // ctx.addFilterMap(convertPutMap);
+
+	    AccessLogValve log = new AccessLogValve();
+	    ctx.getPipeline().addValve(log);
 	    
 	    tomcat.start();
 
