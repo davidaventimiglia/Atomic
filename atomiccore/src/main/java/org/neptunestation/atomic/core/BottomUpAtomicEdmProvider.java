@@ -58,7 +58,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
     public class AtomicEntityType extends EntityType {
         public AtomicEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
             setName(""+r.getString(3));
-            setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3)));
+            setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3), r.getString(4)));
             setProperties(makeProperties(m, r.getString(1), r.getString(2), r.getString(3)));
             setKey(makeKey(m, r.getString(1), r.getString(2), r.getString(3)));}}
 
