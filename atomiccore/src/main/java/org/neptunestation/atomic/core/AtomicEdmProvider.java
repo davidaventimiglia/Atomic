@@ -47,6 +47,11 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         d.setSummary(String.format("%s", table));
         return d;}
 
+    protected Documentation makeDocumentation (DatabaseMetaData meta, String catalog, String schema, String table, String type) throws NamingException, SQLException {
+        Documentation d = makeDocumentation(meta, catalog, schema, table);
+        d.setSummary(String.format("%s", type));
+        return d;}
+
     protected List<Property> makeProperties (DatabaseMetaData meta, String catalog, String schema, String table) throws NamingException, SQLException {
 	try (ResultSet r = meta.getColumns(catalog, schema, table, null)) {
 	    List<Property> properties = new ArrayList<Property>();
