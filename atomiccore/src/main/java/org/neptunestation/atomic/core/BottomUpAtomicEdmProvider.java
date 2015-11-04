@@ -18,14 +18,14 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
     public class AtomicRoot {
         private Map<String, AtomicSchema> schemas = new HashMap<>();
         public AtomicRoot (DatabaseMetaData m) throws NamingException, SQLException {
-            for (ResultSet r = m.getTables(null, null, null, null); r.next();) addSchema(m, r);
+            for (ResultSet r = m.getTablePrivileges(null, null, null); r.next();) addSchema(m, r);
 	    for (Schema s : getSchemas()) for (EntityContainer ec : s.getEntityContainers()) {ec.setDefaultEntityContainer(true); break;}}
         public AtomicSchema addSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
             if (schemas.get(""+r.getString(1))==null) {
                 AtomicSchema s = new AtomicSchema(m, r);
                 schemas.put(s.getNamespace(), s);}
             schemas.get(""+r.getString(1)).addEntityContainer(m, r);
-            schemas.get(""+r.getString(1)).addEntityType(m, r);
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(""+r.getString(1)).addEntityType(m, r);
             return schemas.get(""+r.getString(1));}
         public List<Schema> getSchemas () {
             return new ArrayList<Schema>(schemas.values());}}
@@ -40,7 +40,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
                 AtomicEntityContainer ec = new AtomicEntityContainer(m, r);
                 entityContainers.put(ec.getName(), ec);
                 getEntityContainers().add(ec);}
-            entityContainers.get(""+r.getString(2)).addEntitySet(m, r);
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) entityContainers.get(""+r.getString(2)).addEntitySet(m, r);
             return entityContainers.get(""+r.getString(2));}
         public AtomicEntityType addEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
             if (entityTypes.get(""+r.getString(2))==null) {
@@ -58,7 +58,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
     public class AtomicEntityType extends EntityType {
         public AtomicEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
             setName(""+r.getString(3));
-            setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3), r.getString(4)));
+            setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3)));
             setProperties(makeProperties(m, r.getString(1), r.getString(2), r.getString(3)));
             setKey(makeKey(m, r.getString(1), r.getString(2), r.getString(3)));}}
 
