@@ -16,9 +16,10 @@ public class Atomic {
     public static void main (String[] args) throws Exception {
 	boolean debug = false;
 	try {
+	    LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
+	    
 	    String jdbcDriver = System.getProperty("jdbc-driver");
 	    String jdbcUrl = System.getProperty("jdbc-url");
-
 	    if (jdbcDriver==null || jdbcUrl==null) {
 		System.out.println("\n" +
 				   "ATOMIC (Usage):\n" +
@@ -29,17 +30,17 @@ public class Atomic {
 				   "contextPath - URL Context Path (default: '')\n" +
 				   "debug - Debug output in [true, false] (default: false)\n");
 		System.exit(1);}
-
 	    int httpPort = 80;
 	    try {httpPort = Integer.parseInt(System.getProperty("http-port")==null ? "80" : System.getProperty("http-port"));}
 	    catch (Throwable t) {System.err.println("The 'http-port' system property must be an integer.");}
-
 	    String contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
-
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
 	    Tomcat tomcat = new Tomcat();
+	    tomcat.setBaseDir(String.format("atomic.%s", httpPort));
+	    tomcat.getService().setName("Atomic");
+	    tomcat.getEngine().setName("Atomic");
             tomcat.enableNaming();
 	    tomcat.setPort(httpPort);
 	    tomcat.setSilent(true);
@@ -123,6 +124,7 @@ public class Atomic {
 	    // ctx.addFilterMap(convertPutMap);
 
 	    AccessLogValve log = new AccessLogValve();
+	    log.setPattern("common");
 	    ctx.getPipeline().addValve(log);
 	    
 	    tomcat.start();
@@ -133,6 +135,10 @@ public class Atomic {
 	    System.out.println("http-port: " + httpPort);
 	    System.out.println("context-path: " + contextPath);
 	    System.out.println("debug: " + debug);
-
+	    System.out.println("server: " + tomcat.getServer());
+	    System.out.println("service: " + tomcat.getService());
+	    System.out.println("engine: " + tomcat.getEngine());
+	    System.out.println("host: " + tomcat.getHost());
+	    
 	    tomcat.getServer().await();}
 	catch (Exception t) {if (debug) t.printStackTrace(System.err);}}}
