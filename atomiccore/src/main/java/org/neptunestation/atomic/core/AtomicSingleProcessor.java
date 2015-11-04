@@ -94,7 +94,7 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
 
     @Override public ODataResponse readEntitySet (GetEntitySetUriInfo uriInfo, String contentType) throws ODataException {
         if (uriInfo.getNavigationSegments().size()==0) try {
-                List<Map<String, Object>> data = getEntityData(String.format(" select * from %s ", uriInfo.getStartEntitySet().getName()));
+                List<Map<String, Object>> data = getEntityData(String.format("select * from %s", uriInfo.getStartEntitySet().getName()));
                 if (data.isEmpty()) throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
                 return EntityProvider.writeFeed(contentType, uriInfo.getStartEntitySet(), data, EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build());}
             catch (Throwable t) {throw new ODataException(t);}
@@ -104,7 +104,7 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
         if (uriInfo.getNavigationSegments().size()==0) try {
                 List<String> pexps = new ArrayList<String>();
                 for (KeyPredicate p : uriInfo.getKeyPredicates()) pexps.add(String.format("\"%s\" = '%s'", p.getProperty().getName(), p.getLiteral()));
-                List<Map<String, Object>> data = getEntityData(String.format(" select * from %s where %s ", uriInfo.getStartEntitySet().getName(), pexps.toString().replaceAll(",", " and ").replaceAll("\\[", " ").replaceAll("]", " ")));
+                List<Map<String, Object>> data = getEntityData(String.format("select * from %s where %s", uriInfo.getStartEntitySet().getName(), pexps.toString().replaceAll(",", " and ").replaceAll("\\[", " ").replaceAll("]", " ")));
                 if (data.isEmpty()) throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
                 return EntityProvider.writeEntry(contentType, uriInfo.getStartEntitySet(), data.get(0), EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build());}
             catch (Throwable t) {throw new ODataException(t);}
