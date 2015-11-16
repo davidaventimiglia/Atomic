@@ -8,64 +8,114 @@ import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.exception.*;
 
 public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
-    protected List<Schema> schemas = new ArrayList<>();
-    protected List<EntityContainer> entityContainers = new ArrayList<>();
-    protected List<EntitySet> entitySets = new ArrayList<>();
-
     public BottomUpAtomicEdmProvider (Properties params, String username, String password) {
         super(params, username, password);}
 
     public class AtomicRoot {
         private Map<String, AtomicSchema> schemas = new HashMap<>();
         public AtomicRoot (DatabaseMetaData m) throws NamingException, SQLException {
-	    Map<String, String[]> xrefs = new HashMap<>();
-	    try (ResultSet r = m.getCrossReference(null, null, null, null, null, null)) {while (r.next()) {xrefs.put(r.getString(3), new String[14]); for (int i = 1; i<=14; i++) xrefs.get(r.getString(3))[i-1] = r.getString(i);}}
-	    try (ResultSet r = m.getTablePrivileges(null, null, null)) {while (r.next()) addOrUpdateSchema(m, r, xrefs);}
+	    try (ResultSet r = m.getTablePrivileges(null, null, null)) {while (r.next()) addOrUpdateSchema(m, r);}
+	    try (ResultSet r = m.getCrossReference(null, null, null, null, null, null)) {while (r.next()) addOrUpdateAssociation(m, r);}
 	    for (Schema s : getSchemas()) for (EntityContainer ec : s.getEntityContainers()) {ec.setDefaultEntityContainer(true); break;}}
-        public AtomicSchema addOrUpdateSchema (DatabaseMetaData m, ResultSet r, Map<String, String[]> xrefs) throws NamingException, SQLException {
-            if (schemas.get(""+r.getString(1))==null) {
+	public void addOrUpdateAssociation (DatabaseMetaData m, ResultSet r) throws SQLException {
+	    schemas.get(r.getString(2)).addOrUpdateEnd1Association(m, r);
+	    schemas.get(r.getString(6)).addOrUpdateEnd2Association(m, r);}
+        public AtomicSchema addOrUpdateSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
+	    if (!schemas.containsKey(r.getString(2))) {
                 AtomicSchema s = new AtomicSchema(m, r);
                 schemas.put(s.getNamespace(), s);}
-            schemas.get(""+r.getString(1)).addOrUpdateEntityContainer(m, r);
-	    schemas.get(""+r.getString(1)).addOrUpdateAssociations(xrefs);
-	    schemas.get(""+r.getString(1)).addOrUpdateComplexTypes();
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(""+r.getString(1)).addOrUpdateEntityType(m, r);
-            return schemas.get(""+r.getString(1));}
+            schemas.get(r.getString(2)).addOrUpdateEntityContainer(m, r);
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(r.getString(2)).addOrUpdateEntityType(m, r);
+            return schemas.get(r.getString(2));}
         public List<Schema> getSchemas () {
             return new ArrayList<Schema>(schemas.values());}}
 
     public class AtomicSchema extends Schema {
         private Map<String, AtomicEntityContainer> entityContainers = new HashMap<>();
         private Map<String, AtomicEntityType> entityTypes = new HashMap<>();
+        private Map<String, AtomicAssociation> associations = new HashMap<>();
         public AtomicSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
-            setNamespace("" + r.getString(1));}
-	public List<AtomicAssociation> addOrUpdateAssociations (Map<String, String[]> xrefs) {return null;}
-	public List<AtomicComplexType> addOrUpdateComplexTypes () {return null;}
+	    setAnnotationAttributes(new ArrayList<AnnotationAttribute>());
+	    setAnnotationElements(new ArrayList<AnnotationElement>());
+	    setAssociations(new ArrayList<Association>());
+	    setComplexTypes(new ArrayList<ComplexType>());
+	    setEntityContainers(new ArrayList<EntityContainer>());
+	    setEntityTypes(new ArrayList<EntityType>());
+	    setUsings(new ArrayList<Using>());
+            setNamespace("" + r.getString(2));}
+	public AtomicAssociation addOrUpdateEnd1Association (DatabaseMetaData m, ResultSet r) throws SQLException {
+	    if (!associations.containsKey(r.getString(2))) {
+		AtomicAssociation a = new AtomicAssociation(m, r);
+		associations.put(a.getName(), a);
+		getAssociations().add(a);}
+	    return associations.get(r.getString(2));}
+	public AtomicAssociation addOrUpdateEnd2Association (DatabaseMetaData m, ResultSet r) throws SQLException {
+	    if (!associations.containsKey(r.getString(6))) {
+		AtomicAssociation a = new AtomicAssociation(m, r);
+		associations.put(a.getName(), a);
+		getAssociations().add(a);}
+	    return associations.get(r.getString(6));}
+	public List<AtomicComplexType> addOrUpdateComplexTypes () {
+	    return null;}
         public AtomicEntityContainer addOrUpdateEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-            if (entityContainers.get(""+r.getString(2))==null) {
+	    if (!entityContainers.containsKey(r.getString(2))) {
                 AtomicEntityContainer ec = new AtomicEntityContainer(m, r);
                 entityContainers.put(ec.getName(), ec);
                 getEntityContainers().add(ec);}
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) entityContainers.get(""+r.getString(2)).addOrUpdateEntitySet(m, r);
-            return entityContainers.get(""+r.getString(2));}
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) entityContainers.get(r.getString(2)).addOrUpdateEntitySet(m, r);
+            return entityContainers.get(r.getString(2));}
         public AtomicEntityType addOrUpdateEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-            if (entityTypes.get(""+r.getString(2))==null) {
+	    if (!entityTypes.containsKey(r.getString(2))) {
                 AtomicEntityType et = new AtomicEntityType(m, r);
                 entityTypes.put(et.getName(), et);
                 getEntityTypes().add(et);}
-            return entityTypes.get(""+r.getString(3));}
-	@Override public List<Association> getAssociations () {
-	    return (super.getAssociations()==null) ? new ArrayList<Association>() : super.getAssociations();}
-        @Override public List<EntityContainer> getEntityContainers () {
-            if (super.getEntityContainers()==null) super.setEntityContainers(new ArrayList<EntityContainer>());
-            return super.getEntityContainers();}
-        @Override public List<EntityType> getEntityTypes () {
-            if (super.getEntityTypes()==null) super.setEntityTypes(new ArrayList<EntityType>());
-            return super.getEntityTypes();}}
+            return entityTypes.get(r.getString(3));}}
 
     public class AtomicAssociation extends Association {
-	public AtomicAssociation () {super();}}
+	public AtomicAssociation (DatabaseMetaData m, ResultSet r) throws SQLException {
+	    super();
+	    setName(r.getString(12));
+	    setEnd1(new AtomicAssociationEnd());
+	    setEnd2(new AtomicAssociationEnd());
+	    setReferentialConstraint(new AtomicReferentialConstraint());
+	}}
+
+    public class AtomicReferentialConstraint extends ReferentialConstraint {
+	public AtomicReferentialConstraint () {
+	    super();
+	    setAnnotationAttributes(new ArrayList<AnnotationAttribute>());
+	    setAnnotationElements(new ArrayList<AnnotationElement>());
+	    setDocumentation(new Documentation());
+	    setDependent(new AtomicReferentialConstraintRole());
+	    setPrincipal(new AtomicReferentialConstraintRole());}}
+
+    public class AtomicReferentialConstraintRole extends ReferentialConstraintRole {
+	public AtomicReferentialConstraintRole () {
+	    super();
+	    setAnnotationAttributes(new ArrayList<AnnotationAttribute>());
+	    setAnnotationElements(new ArrayList<AnnotationElement>());
+	    setRole("foo");
+	    setPropertyRefs(new ArrayList<PropertyRef>());}}
+
+    public class AtomicAssociationEnd extends AssociationEnd {
+	public AtomicAssociationEnd () {
+	    super();
+	    setAnnotationAttributes(new ArrayList<AnnotationAttribute>());
+	    setAnnotationElements(new ArrayList<AnnotationElement>());
+	    setDocumentation(new Documentation());
+	    setMultiplicity(EdmMultiplicity.MANY);
+	    setOnDelete(new AtomicOnDelete());
+	    setRole("foo");
+	    setType(new FullQualifiedName("foo", "bar"));}}
+
+    public class AtomicOnDelete extends OnDelete {
+	public AtomicOnDelete () {
+	    super();
+	    setAction(EdmAction.Cascade);
+	    setAnnotationAttributes(new ArrayList<AnnotationAttribute>());
+	    setAnnotationElements(new ArrayList<AnnotationElement>());
+	    setDocumentation(new Documentation());}}
 
     public class AtomicComplexType extends ComplexType {
 	public AtomicComplexType () {super();}}
@@ -73,7 +123,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
     public class AtomicEntityType extends EntityType {
         public AtomicEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
-            setName(""+r.getString(3));
+            setName(r.getString(3));
             setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3)));
             setProperties(makeProperties(m, r.getString(1), r.getString(2), r.getString(3)));
             setKey(makeKey(m, r.getString(1), r.getString(2), r.getString(3)));}}
@@ -82,16 +132,14 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
         private Map<String, AtomicEntitySet> entitySets = new HashMap<>();
         public AtomicEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
+	    setEntitySets(new ArrayList<EntitySet>());
             setName("" + r.getString(2));}
         public AtomicEntitySet addOrUpdateEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-            if (entitySets.get(""+r.getString(3))==null) {
+	    if (!entitySets.containsKey(r.getString(3))) {
                 AtomicEntitySet es = new AtomicEntitySet(m, r);
                 entitySets.put(es.getName(), es);
                 getEntitySets().add(es);}
-            return entitySets.get(""+r.getString(3));}
-        @Override public List<EntitySet> getEntitySets () {
-            if (super.getEntitySets()==null) super.setEntitySets(new ArrayList<EntitySet>());
-            return super.getEntitySets();}}
+            return entitySets.get(r.getString(3));}}
 
     public class AtomicEntitySet extends EntitySet {
         public AtomicEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
