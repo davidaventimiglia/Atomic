@@ -20,13 +20,12 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	public void addOrUpdateAssociation (DatabaseMetaData m, ResultSet r) throws SQLException {
 	    schemas.get(r.getString(2)).addOrUpdateEnd1Association(m, r);
 	    schemas.get(r.getString(6)).addOrUpdateEnd2Association(m, r);}
-        public AtomicSchema addOrUpdateSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
+        public void addOrUpdateSchema (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    if (!schemas.containsKey(r.getString(2))) {
                 AtomicSchema s = new AtomicSchema(m, r);
                 schemas.put(s.getNamespace(), s);}
             schemas.get(r.getString(2)).addOrUpdateEntityContainer(m, r);
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(r.getString(2)).addOrUpdateEntityType(m, r);
-            return schemas.get(r.getString(2));}
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(r.getString(2)).addOrUpdateEntityType(m, r);}
         public List<Schema> getSchemas () {
             return new ArrayList<Schema>(schemas.values());}}
 
@@ -44,33 +43,28 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	    setEntityTypes(new ArrayList<EntityType>());
 	    setUsings(new ArrayList<Using>());
             setNamespace("" + r.getString(2));}
-	public AtomicAssociation addOrUpdateEnd1Association (DatabaseMetaData m, ResultSet r) throws SQLException {
+	public void addOrUpdateEnd1Association (DatabaseMetaData m, ResultSet r) throws SQLException {
 	    if (!associations.containsKey(r.getString(2))) {
 		AtomicAssociation a = new AtomicAssociation(m, r);
 		associations.put(a.getName(), a);
-		getAssociations().add(a);}
-	    return associations.get(r.getString(2));}
-	public AtomicAssociation addOrUpdateEnd2Association (DatabaseMetaData m, ResultSet r) throws SQLException {
+		getAssociations().add(a);}}
+	public void addOrUpdateEnd2Association (DatabaseMetaData m, ResultSet r) throws SQLException {
 	    if (!associations.containsKey(r.getString(6))) {
 		AtomicAssociation a = new AtomicAssociation(m, r);
 		associations.put(a.getName(), a);
-		getAssociations().add(a);}
-	    return associations.get(r.getString(6));}
-	public List<AtomicComplexType> addOrUpdateComplexTypes () {
-	    return null;}
-        public AtomicEntityContainer addOrUpdateEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
+		getAssociations().add(a);}}
+	public void addOrUpdateComplexTypes () {}
+        public void addOrUpdateEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    if (!entityContainers.containsKey(r.getString(2))) {
                 AtomicEntityContainer ec = new AtomicEntityContainer(m, r);
                 entityContainers.put(ec.getName(), ec);
                 getEntityContainers().add(ec);}
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) entityContainers.get(r.getString(2)).addOrUpdateEntitySet(m, r);
-            return entityContainers.get(r.getString(2));}
-        public AtomicEntityType addOrUpdateEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
+            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) entityContainers.get(r.getString(2)).addOrUpdateEntitySet(m, r);}
+        public void addOrUpdateEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    if (!entityTypes.containsKey(r.getString(2))) {
                 AtomicEntityType et = new AtomicEntityType(m, r);
                 entityTypes.put(et.getName(), et);
-                getEntityTypes().add(et);}
-            return entityTypes.get(r.getString(3));}}
+                getEntityTypes().add(et);}}}
 
     public class AtomicAssociation extends Association {
 	public AtomicAssociation (DatabaseMetaData m, ResultSet r) throws SQLException {
@@ -134,12 +128,11 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	    super();
 	    setEntitySets(new ArrayList<EntitySet>());
             setName("" + r.getString(2));}
-        public AtomicEntitySet addOrUpdateEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
+        public void addOrUpdateEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    if (!entitySets.containsKey(r.getString(3))) {
                 AtomicEntitySet es = new AtomicEntitySet(m, r);
                 entitySets.put(es.getName(), es);
-                getEntitySets().add(es);}
-            return entitySets.get(r.getString(3));}}
+                getEntitySets().add(es);}}}
 
     public class AtomicEntitySet extends EntitySet {
         public AtomicEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
