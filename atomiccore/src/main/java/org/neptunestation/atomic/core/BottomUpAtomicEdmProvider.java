@@ -8,20 +8,27 @@ import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.exception.*;
 
 public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
-    public static String PKTABLE_CAT = "PKTABLE_CAT";
-    public static String PKTABLE_SCHEM = "PKTABLE_SCHEM";
-    public static String PKTABLE_NAME = "PKTABLE_NAME";
-    public static String PKCOLUMN_NAME = "PKCOLUMN_NAME";
-    public static String FKTABLE_CAT = "FKTABLE_CAT";
-    public static String FKTABLE_SCHEM = "FKTABLE_SCHEM";
-    public static String FKTABLE_NAME = "FKTABLE_NAME";
-    public static String FKCOLUMN_NAME = "FKCOLUMN_NAME";
-    public static String KEY_SEQ = "KEY_SEQ";
-    public static String UPDATE_RULE = "UPDATE_RULE";
-    public static String DELETE_RULE = "DELETE_RULE";
-    public static String FK_NAME = "FK_NAME";
-    public static String PK_NAME = "PK_NAME";
     public static String DEFERRABILITY = "DEFERRABILITY";
+    public static String DELETE_RULE = "DELETE_RULE";
+    public static String FKCOLUMN_NAME = "FKCOLUMN_NAME";
+    public static String FKTABLE_CAT = "FKTABLE_CAT";
+    public static String FKTABLE_NAME = "FKTABLE_NAME";
+    public static String FKTABLE_SCHEM = "FKTABLE_SCHEM";
+    public static String FK_NAME = "FK_NAME";
+    public static String GRANTEE = "GRANTEE";
+    public static String GRANTOR = "GRANTOR";
+    public static String IS_GRANTABLE = "IS_GRANTABLE";
+    public static String KEY_SEQ = "KEY_SEQ";
+    public static String PKCOLUMN_NAME = "PKCOLUMN_NAME";
+    public static String PKTABLE_CAT = "PKTABLE_CAT";
+    public static String PKTABLE_NAME = "PKTABLE_NAME";
+    public static String PKTABLE_SCHEM = "PKTABLE_SCHEM";
+    public static String PK_NAME = "PK_NAME";
+    public static String PRIVILEGE = "PRIVILEGE";
+    public static String TABLE_CAT = "TABLE_CAT";
+    public static String TABLE_NAME = "TABLE_NAME";
+    public static String TABLE_SCHEM = "TABLE_SCHEM";
+    public static String UPDATE_RULE = "UPDATE_RULE";
 
     public BottomUpAtomicEdmProvider (Properties params, String username, String password) {
         super(params, username, password);}
@@ -30,16 +37,16 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
         private Map<String, AtomicSchema> schemas = new HashMap<>();
         public AtomicRoot (DatabaseMetaData m) throws NamingException, SQLException {
 	    try (ResultSet r = m.getTablePrivileges(null, null, null)) {while (r.next()) addSchema(this, m, r);}
-	    try (ResultSet r = m.getCrossReference(null, null, null, null, null, null)) {while (r.next()) addAssociation(getSchema(r.getString(2)), m, r);}
+	    try (ResultSet r = m.getCrossReference(null, null, null, null, null, null)) {while (r.next()) addAssociation(getSchema(r.getString(PKTABLE_SCHEM)), m, r);}
 	    for (Schema s : getSchemas()) for (EntityContainer ec : s.getEntityContainers()) {ec.setDefaultEntityContainer(true); break;}}
 	public void addAssociation (AtomicSchema s, DatabaseMetaData m, ResultSet r) throws SQLException {
-	    schemas.get(r.getString(2)).addAssociation(s, m, r);}
+	    schemas.get(r.getString(PKTABLE_SCHEM)).addAssociation(s, m, r);}
         public void addSchema (AtomicRoot root, DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-	    if (!schemas.containsKey(r.getString(2))) {
+	    if (!schemas.containsKey(r.getString(TABLE_SCHEM))) {
                 AtomicSchema s = new AtomicSchema(root, m, r);
                 schemas.put(s.getNamespace(), s);}
-            schemas.get(r.getString(2)).addEntityContainer(m, r);
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6))) schemas.get(r.getString(2)).addEntityType(m, r);}
+            schemas.get(r.getString(TABLE_SCHEM)).addEntityContainer(m, r);
+            if (m.getUserName().equals(r.getString(GRANTEE)) && "select".equalsIgnoreCase(r.getString(PRIVILEGE))) schemas.get(r.getString(TABLE_SCHEM)).addEntityType(m, r);}
 	public AtomicSchema getSchema (String name) {
 	    return schemas.get(name);}
         public List<Schema> getSchemas () {
@@ -57,7 +64,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
         public AtomicSchema (AtomicRoot root, DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
 	    this.root = root;
-            setNamespace("" + r.getString(2));}
+            setNamespace("" + r.getString(TABLE_SCHEM));}
 	@Override public List<AnnotationAttribute> getAnnotationAttributes () {
 	    return new ArrayList<AnnotationAttribute>(annotationAttributes.values());}
 	@Override public List<AnnotationElement> getAnnotationElements () {
@@ -77,18 +84,18 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	public AtomicEntityContainer getEntityContainer (String name) {
 	    return entityContainers.get(name);}
 	public void addAssociation (AtomicSchema parent, DatabaseMetaData m, ResultSet r) throws SQLException {
-	    if (!associations.containsKey(r.getString(2))) {
+	    if (!associations.containsKey(r.getString(FK_NAME))) {
 		AtomicAssociation a = new AtomicAssociation(parent, m, r);
 		associations.put(a.getName(), a);}}
 	public void addComplexTypes () {}
         public void addEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-	    if (!entityContainers.containsKey(r.getString(2))) {
+	    if (!entityContainers.containsKey(r.getString(TABLE_SCHEM))) {
                 AtomicEntityContainer ec = new AtomicEntityContainer(m, r);
                 entityContainers.put(ec.getName(), ec);}
-            if (m.getUserName().equals(r.getString(5)) && "select".equalsIgnoreCase(r.getString(6)))
-		entityContainers.get(r.getString(2)).addEntitySet(m, r);}
+            if (m.getUserName().equals(r.getString(GRANTEE)) && "select".equalsIgnoreCase(r.getString(PRIVILEGE)))
+		entityContainers.get(r.getString(TABLE_SCHEM)).addEntitySet(m, r);}
         public void addEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-	    if (!entityTypes.containsKey(r.getString(2))) {
+	    if (!entityTypes.containsKey(r.getString(TABLE_SCHEM))) {
                 AtomicEntityType et = new AtomicEntityType(m, r);
                 entityTypes.put(et.getName(), et);}}}
 
@@ -150,9 +157,9 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	public AtomicAssociationEnd (AtomicAssociation association, DatabaseMetaData m, ResultSet r, boolean end1) throws SQLException {
 	    super();
 	    this.association = association;
-	    setRole(association.schema.getEntityContainer(r.getString(2)).getEntitySet(end1 ? r.getString(3) : r.getString(7)).getName());
+	    setRole(association.schema.getEntityContainer(r.getString(PKTABLE_SCHEM)).getEntitySet(end1 ? r.getString(PKTABLE_NAME) : r.getString(FKTABLE_NAME)).getName());
 	    setMultiplicity(EdmMultiplicity.MANY);
-	    setType(association.schema.getEntityContainer(r.getString(2)).getEntitySet(end1 ? r.getString(3) : r.getString(7)).getEntityType());
+	    setType(association.schema.getEntityContainer(r.getString(PKTABLE_SCHEM)).getEntitySet(end1 ? r.getString(PKTABLE_NAME) : r.getString(FKTABLE_NAME)).getEntityType());
 	    setOnDelete(new AtomicOnDelete(m, r));}}
 
     public class AtomicOnDelete extends OnDelete {
@@ -177,30 +184,30 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
     public class AtomicEntityType extends EntityType {
         public AtomicEntityType (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
-            setName(r.getString(3));
-            setDocumentation(makeDocumentation(m, r.getString(1), r.getString(2), r.getString(3)));
-            setProperties(makeProperties(m, r.getString(1), r.getString(2), r.getString(3)));
-            setKey(makeKey(m, r.getString(1), r.getString(2), r.getString(3)));}}
+            setName(r.getString(TABLE_NAME));
+            setDocumentation(makeDocumentation(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
+            setProperties(makeProperties(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
+            setKey(makeKey(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));}}
 
     public class AtomicEntityContainer extends EntityContainer {
         private Map<String, AtomicEntitySet> entitySets = new HashMap<>();
         public AtomicEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
-            setName("" + r.getString(2));}
+            setName("" + r.getString(TABLE_SCHEM));}
 	@Override public List<EntitySet> getEntitySets () {
 	    return new ArrayList<EntitySet>(entitySets.values());}
 	public EntitySet getEntitySet (String name) {
 	    return entitySets.get(name);}
         public void addEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
-	    if (!entitySets.containsKey(r.getString(3))) {
+	    if (!entitySets.containsKey(r.getString(TABLE_NAME))) {
                 AtomicEntitySet es = new AtomicEntitySet(m, r);
                 entitySets.put(es.getName(), es);}}}
 
     public class AtomicEntitySet extends EntitySet {
         public AtomicEntitySet (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
 	    super();
-            setName(r.getString(3));
-            setEntityType(new FullQualifiedName(String.format("%s.%s", r.getString(1), r.getString(2)), r.getString(3)));}}
+            setName(r.getString(TABLE_NAME));
+            setEntityType(new FullQualifiedName(String.format("%s.%s", r.getString(TABLE_CAT), r.getString(TABLE_SCHEM)), r.getString(TABLE_NAME)));}}
 
     @Override public List<Schema> getSchemas () throws ODataException {
 	try (Connection conn = getConn()) {return (new AtomicRoot(conn.getMetaData())).getSchemas();}
