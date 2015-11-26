@@ -7,20 +7,18 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="yes"/>
 
-  <xsl:template match="/">
+  <!-- Service Document  -->
+
+  <xsl:template match="/p:service"> 
     <html>
       <head>
       </head>
       <body>
-        <xsl:apply-templates/>
+	<ul>
+	  <xsl:apply-templates/>
+	</ul>
       </body>
     </html>
-  </xsl:template>
-
-  <xsl:template match="p:service">
-    <ul>
-      <xsl:apply-templates/>
-    </ul>
   </xsl:template>
 
   <xsl:template match="p:workspace">
@@ -45,12 +43,18 @@
 
   <!-- Feed -->
 
-  <xsl:template match="a:feed">
-    <table border="1">
-      <caption><strong><xsl:value-of select="a:title"/></strong></caption>
-      <xsl:apply-templates select="a:entry[1]" mode="table-header"/>
-      <xsl:apply-templates select="a:entry" mode="table-data"/>
-    </table>
+  <xsl:template match="/a:feed">
+    <html>
+      <head>
+      </head>
+      <body>
+	<table border="1">
+	  <caption><strong><xsl:value-of select="a:title"/></strong></caption>
+	  <xsl:apply-templates select="a:entry[1]" mode="table-header"/>
+	  <xsl:apply-templates select="a:entry" mode="table-data"/>
+	</table>
+      </body>
+    </html>
   </xsl:template>
 
   <xsl:template match="a:entry" mode="table-header">
@@ -84,13 +88,19 @@
   <!-- Entry Detail -->
 
   <xsl:template match="/a:entry">
-    <form action="{link/@href}">
-      <table border="1">
-        <xsl:apply-templates select="a:content/m:properties" mode="entry-detail"/>
-      </table>
-      <input type="hidden" name="method" value="put"/>
-      <input type="submit" value="Submit"/>
-    </form>
+    <html>
+      <head>
+      </head>
+      <body>
+	<form action="{link/@href}">
+	  <table border="1">
+            <xsl:apply-templates select="a:content/m:properties" mode="entry-detail"/>
+	  </table>
+	  <input type="hidden" name="method" value="put"/>
+	  <input type="submit" value="Submit"/>
+	</form>
+      </body>
+    </html>
   </xsl:template>
 
   <xsl:template match="d:*" mode="entry-detail">
