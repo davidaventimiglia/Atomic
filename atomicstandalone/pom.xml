@@ -38,6 +38,7 @@
 	  <archive>
 	    <manifest>
 	      <mainClass>org.neptunestation.atomic.standalone.Atomic</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 	    </manifest>
 	  </archive>
           <descriptorRefs>

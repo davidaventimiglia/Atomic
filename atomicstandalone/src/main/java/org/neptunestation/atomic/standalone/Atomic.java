@@ -37,13 +37,16 @@ public class Atomic {
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
+	    String version = String.format("Atomic/%s", Atomic.class.getPackage().getImplementationVersion());
+
 	    Tomcat tomcat = new Tomcat();
 	    tomcat.setBaseDir(String.format("atomic.%s", httpPort));
-	    tomcat.getService().setName("Atomic");
-	    tomcat.getEngine().setName("Atomic");
+	    tomcat.getService().setName(version);
+	    tomcat.getEngine().setName(version);
             tomcat.enableNaming();
 	    tomcat.setPort(httpPort);
 	    tomcat.setSilent(true);
+	    tomcat.getConnector().setProperty("server", version);
 
 	    Context ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
 
