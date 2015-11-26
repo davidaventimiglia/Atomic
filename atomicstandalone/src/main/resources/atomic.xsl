@@ -3,7 +3,7 @@
 		xmlns:a="http://www.w3.org/2005/Atom"
 		xmlns:p="http://www.w3.org/2007/app"
                 xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
-                xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" 
+                xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="yes"/>
 
