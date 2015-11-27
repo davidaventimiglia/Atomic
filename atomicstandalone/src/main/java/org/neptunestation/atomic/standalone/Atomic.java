@@ -13,6 +13,9 @@ import org.neptunestation.atomic.core.*;
 import org.neptunestation.filterpack.filters.*;
 
 public class Atomic {
+    public static String getVersion () {
+	return String.format("%s/%s", Atomic.class.getPackage().getImplementationTitle(), Atomic.class.getPackage().getImplementationVersion());}
+    
     public static void main (String[] args) throws Exception {
 	boolean debug = false;
 	try {
@@ -37,16 +40,14 @@ public class Atomic {
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
-	    String version = String.format("Atomic/%s", Atomic.class.getPackage().getImplementationVersion());
-
 	    Tomcat tomcat = new Tomcat();
 	    tomcat.setBaseDir(String.format("atomic.%s", httpPort));
-	    tomcat.getService().setName(version);
-	    tomcat.getEngine().setName(version);
+	    tomcat.getService().setName(getVersion());
+	    tomcat.getEngine().setName(getVersion());
             tomcat.enableNaming();
 	    tomcat.setPort(httpPort);
 	    tomcat.setSilent(true);
-	    tomcat.getConnector().setProperty("server", version);
+	    tomcat.getConnector().setProperty("server", getVersion());
 
 	    Context ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
 
