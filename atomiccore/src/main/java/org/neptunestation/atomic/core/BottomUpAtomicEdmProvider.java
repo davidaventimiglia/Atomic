@@ -86,6 +86,8 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	public void addAssociation (AtomicSchema parent, DatabaseMetaData m, ResultSet r) throws SQLException {
 	    if (!associations.containsKey(r.getString(FK_NAME))) {
 		AtomicAssociation a = new AtomicAssociation(parent, m, r);
+		AtomicEntityType e = entityTypes.get(a.getEnd1().getRole());
+		e.getNavigationProperties().add(new AtomicNavigationProperty(a, e, m, r));
 		associations.put(a.getName(), a);}}
 	public void addComplexTypes () {}
         public void addEntityContainer (DatabaseMetaData m, ResultSet r) throws NamingException, SQLException {
@@ -98,6 +100,22 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	    if (!entityTypes.containsKey(r.getString(TABLE_SCHEM))) {
                 AtomicEntityType et = new AtomicEntityType(m, r);
                 entityTypes.put(et.getName(), et);}}}
+
+    public class AtomicNavigationProperty extends NavigationProperty {
+	public EntityType parent;
+        private Map<String, AtomicAnnotationAttribute> annotationAttributes = new HashMap<>();
+        private Map<String, AtomicAnnotationElement> annotationElements = new HashMap<>();
+	@Override public List<AnnotationAttribute> getAnnotationAttributes () {
+	    return new ArrayList<AnnotationAttribute>(annotationAttributes.values());}
+	@Override public List<AnnotationElement> getAnnotationElements () {
+	    return new ArrayList<AnnotationElement>(annotationElements.values());}
+	public AtomicNavigationProperty (Association a, EntityType p, DatabaseMetaData m, ResultSet r) throws SQLException {
+	    super();
+	    this.parent = p;
+	    setFromRole(p.getName());
+	    setName(r.getString(PKCOLUMN_NAME));
+	    setRelationship(new FullQualifiedName(r.getString(PKTABLE_SCHEM), a.getName()));
+	    setToRole(r.getString(FKTABLE_NAME));}}
 
     public class AtomicAssociation extends Association {
 	public AtomicSchema schema;
@@ -187,6 +205,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
             setName(r.getString(TABLE_NAME));
             setDocumentation(makeDocumentation(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
             setProperties(makeProperties(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
+	    setNavigationProperties(makeNavigationProperties(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
             setKey(makeKey(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));}}
 
     public class AtomicEntityContainer extends EntityContainer {
