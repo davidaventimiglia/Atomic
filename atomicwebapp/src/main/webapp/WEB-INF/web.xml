@@ -53,31 +53,46 @@
     </init-param>
   </filter>
 
+  <filter>
+    <filter-name>TransformServerSide</filter-name>
+    <filter-class>org.neptunestation.filterpack.filters.XMLTransformFilter</filter-class>
+    <init-param>
+      <param-name>XSL_URL</param-name>
+      <param-value>http://localhost:8080/atomic-webapp/atomic.xsl</param-value>
+    </init-param>
+  </filter>
+
   <!-- Filter Mappings -->
 
-  <filter-mapping>
-    <filter-name>AddClientCaching</filter-name>
-    <url-pattern>/atomic.svc/*</url-pattern>
-    <url-pattern>/noauth.atomic.svc/*</url-pattern>
-  </filter-mapping>
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>AddClientCaching</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
 
-  <filter-mapping>
-    <filter-name>CompressResponse</filter-name>
-    <url-pattern>/atomic.svc/*</url-pattern>
-    <url-pattern>/noauth.atomic.svc/*</url-pattern>
-  </filter-mapping>
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>CompressResponse</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
 
-  <filter-mapping>
-    <filter-name>DisableFirefoxFeedReader</filter-name>
-    <url-pattern>/atomic.svc/*</url-pattern>
-    <url-pattern>/noauth.atomic.svc/*</url-pattern>
-  </filter-mapping>
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>DisableFirefoxFeedReader</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
 
   <filter-mapping>
     <filter-name>AddXSLStyleSheet</filter-name>
     <url-pattern>/atomic.svc/*</url-pattern>
     <url-pattern>/noauth.atomic.svc/*</url-pattern>
   </filter-mapping>
+
+  <!-- <filter-mapping> -->
+  <!--   <filter-name>TransformServerSide</filter-name> -->
+  <!--   <url-pattern>/atomic.svc/*</url-pattern> -->
+  <!--   <url-pattern>/noauth.atomic.svc/*</url-pattern> -->
+  <!-- </filter-mapping> -->
 
   <!-- Servlet Definitions -->
 
