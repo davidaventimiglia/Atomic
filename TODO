@@ -64,3 +64,5 @@
           driverClassName="org.postgresql.Driver"/>
 #+END_SRC
 * TODO Secure Tomcat
+* TODO Add JavaDoc comments
+* TODO Fill out the README
