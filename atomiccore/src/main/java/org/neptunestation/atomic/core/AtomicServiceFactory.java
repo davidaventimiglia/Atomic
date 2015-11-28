@@ -30,7 +30,7 @@ public class AtomicServiceFactory extends ODataServiceFactory {
             context.getException().printStackTrace(System.err);
             return EntityProvider.writeErrorDocument(context);}}
 
-    @Override public <T extends ODataCallback> T getCallback (final Class<? extends ODataCallback> callbackInterface) { 
+    @Override public <T extends ODataCallback> T getCallback (Class<T> callbackInterface) { 
         if (callbackInterface==null) throw new IllegalArgumentException("ODataCallback parameter is required.");
         if (callbackInterface.isAssignableFrom(AtomicDebugCallback.class)) return (T) new AtomicDebugCallback();
         if (callbackInterface.isAssignableFrom(AtomicErrorCallback.class)) return (T) new AtomicErrorCallback();
