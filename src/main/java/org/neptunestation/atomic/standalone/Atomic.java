@@ -13,34 +13,78 @@ import org.neptunestation.atomic.core.*;
 import org.neptunestation.filterpack.filters.*;
 
 public class Atomic {
+    private static boolean debug = false;
+    private static String jdbcDriver;
+    private static String jdbcUrl;
+    private static int httpPort = 80;
+    private static String contextPath;
+    private static Tomcat tomcat;
+    private static Context ctx;
+    private static AccessLogValve log;
     public static String getVersion () {
 	return String.format("%s/%s", Atomic.class.getPackage().getImplementationTitle(), Atomic.class.getPackage().getImplementationVersion());}
-    
+
     public static void main (String[] args) throws Exception {
-	boolean debug = false;
+        if (args.length!=1) {printUsage(args); return;}
+        init(args);
+        if (args[0].equals("usage")) printUsage(args);
+        if (args[0].equals("help")) printUsage(args);
+        if (args[0].equals("start")) start(args);
+        if (args[0].equals("print-bootstrap-xsl")) printBootStrapXSL(args);
+        if (args[0].equals("print-format-xsl")) printFormatXSL(args);}
+        
+    public static void printBootStrapXSL (String[] args) {
+        System.out.println(ctx.findFilterDef("addXSLStyleSheet").getFilter());}
+
+    public static void printFormatXSL (String[] args) {
+        System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic.xsl")).useDelimiter("\\Z").next());}
+
+    public static void start (String[] args) throws Exception {
+        System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic_splash.txt")).useDelimiter("\\Z").next().replace("$PORT$", httpPort+""));
+        System.out.println("jdbc-driver: " + jdbcDriver);
+        System.out.println("jdbc-url: " + jdbcUrl);
+        System.out.println("http-port: " + httpPort);
+        System.out.println("context-path: " + contextPath);
+        System.out.println("debug: " + debug);
+        System.out.println("server: " + tomcat.getServer());
+        System.out.println("service: " + tomcat.getService());
+        System.out.println("engine: " + tomcat.getEngine());
+        System.out.println("host: " + tomcat.getHost());
+        tomcat.getServer().await();}
+
+    public static void printUsage (String[] args) {
+        System.out.println("\n" +
+                           "ATOMIC\n" +
+                           "======\n" +
+                           "\n" +
+                           "System Properties:\n" +
+                           "\tjdbcDriver - JDBC driver class name (default: none)\n" +
+                           "\tjdbcUrl - JDBC URL (default: none)\n" +
+                           "\thttpPort - HTTP Port (default: 80)\n" +
+                           "\tcontextPath - URL Context Path (default: '')\n" +
+                           "\tdebug - Debug output in [true, false] (default: false)\n" +
+                           "\n" +
+                           "Commands:\n" +
+                           "\tstart - Start server.\n" +
+                           "\tprint-bootstrap-xsl - Print bootstrap XSL.\n" +
+                           "\tprint-format-xsl - Print format XSL.\n");}
+
+    public static void init (String[] args) throws Exception {
+	debug = false;
 	try {
-	    LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
+	    // LogManager.getLogManager().readConfiguration(ClassLoader.getSystemResourceAsStream("logging.properties"));
 	    
-	    String jdbcDriver = System.getProperty("jdbc-driver");
-	    String jdbcUrl = System.getProperty("jdbc-url");
-	    if (jdbcDriver==null || jdbcUrl==null) {
-		System.out.println("\n" +
-				   "ATOMIC (Usage):\n" +
-				   "\n" +
-				   "jdbcDriver - JDBC driver class name (default: none)\n" +
-				   "jdbcUrl - JDBC URL (default: none)\n" +
-				   "httpPort - HTTP Port (default: 80)\n" +
-				   "contextPath - URL Context Path (default: '')\n" +
-				   "debug - Debug output in [true, false] (default: false)\n");
-		System.exit(1);}
-	    int httpPort = 80;
+	    jdbcDriver = System.getProperty("jdbc-driver");
+	    jdbcUrl = System.getProperty("jdbc-url");
+	    if (jdbcDriver==null || jdbcUrl==null) {printUsage(args); return;}
+	    httpPort = 80;
 	    try {httpPort = Integer.parseInt(System.getProperty("http-port")==null ? "80" : System.getProperty("http-port"));}
 	    catch (Throwable t) {System.err.println("The 'http-port' system property must be an integer.");}
-	    String contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
+	    contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
-	    Tomcat tomcat = new Tomcat();
+	    tomcat = new Tomcat();
 	    tomcat.setBaseDir(String.format("atomic.%s", httpPort));
 	    tomcat.getService().setName(getVersion());
 	    tomcat.getEngine().setName(getVersion());
@@ -49,7 +93,7 @@ public class Atomic {
 	    tomcat.setSilent(true);
 	    tomcat.getConnector().setProperty("server", getVersion());
 
-	    Context ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
+	    ctx = tomcat.addContext(contextPath, new File(".").getAbsolutePath());
 
             ContextResource resource = new ContextResource();
             resource.setName("jdbc/AtomicDB");
@@ -146,19 +190,5 @@ public class Atomic {
 	    AccessLogValve log = new AccessLogValve();
 	    log.setPattern("common");
 	    ctx.getPipeline().addValve(log);
-	    
-	    tomcat.start();
-
-	    System.out.println(new Scanner(ClassLoader.getSystemResourceAsStream("atomic_splash.txt")).useDelimiter("\\Z").next().replace("$PORT$", httpPort+""));
-	    System.out.println("jdbc-driver: " + jdbcDriver);
-	    System.out.println("jdbc-url: " + jdbcUrl);
-	    System.out.println("http-port: " + httpPort);
-	    System.out.println("context-path: " + contextPath);
-	    System.out.println("debug: " + debug);
-	    System.out.println("server: " + tomcat.getServer());
-	    System.out.println("service: " + tomcat.getService());
-	    System.out.println("engine: " + tomcat.getEngine());
-	    System.out.println("host: " + tomcat.getHost());
-	    
-	    tomcat.getServer().await();}
-	catch (Exception t) {if (debug) t.printStackTrace(System.err);}}}
+            tomcat.start();}
+	catch (Throwable t) {if (debug) t.printStackTrace(System.err);}}}
