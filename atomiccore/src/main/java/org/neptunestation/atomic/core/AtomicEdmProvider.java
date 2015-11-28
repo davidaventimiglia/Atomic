@@ -133,10 +133,6 @@ public abstract class AtomicEdmProvider extends EdmProvider {
         p.setName(columnName);
         return p;}
 
-    // protected List<NavigationProperty> makeNavigationProperties (DatabaseMetaData meta, String catalog, String schema, String table) {
-    //     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-    //     return navigationProperties;}
-
     protected List<ComplexType> makeComplexTypes (DatabaseMetaData meta, String catalog) {return new ArrayList<ComplexType>();}
 
     protected List<Association> makeAssociations (DatabaseMetaData meta, String catalog) {
