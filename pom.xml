@@ -76,7 +76,7 @@
     </dependency>
     <dependency>
       <groupId>org.neptunestation</groupId>
-      <artifactId>atomic-core</artifactId>
+      <artifactId>libatomic</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>
