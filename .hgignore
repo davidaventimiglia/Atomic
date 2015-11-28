@@ -19,3 +19,5 @@ scratch.*
 scratch*
 tomcat.*
 atomic.*
+bootstrap.xsl
+test.*
