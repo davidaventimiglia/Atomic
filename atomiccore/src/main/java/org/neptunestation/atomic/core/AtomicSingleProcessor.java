@@ -92,6 +92,28 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
                     data.add(datum);}
                 return data;}}
 
+    @Override public ODataResponse readEntity (GetEntityUriInfo uriInfo, String contentType) throws ODataException {
+	System.out.println("properties: " + uriInfo.getTargetEntitySet().getEntityType().getPropertyNames());
+	System.out.println("navigationSegments: " + uriInfo.getNavigationSegments());
+	return null;}
+        // if (false && uriInfo.getNavigationSegments().size()==0)
+	//     try {
+        //         List<String> pexps = new ArrayList<String>();
+        //         for (KeyPredicate p : uriInfo.getKeyPredicates()) pexps.add(String.format("\"%s\" = '%s'", p.getProperty().getName(), p.getLiteral()));
+        //         List<Map<String, Object>> data = getEntityData(String.format("select * from %s where %s", uriInfo.getStartEntitySet().getName(), pexps.toString().replaceAll(",", " and ").replaceAll("\\[", " ").replaceAll("]", " ")));
+        //         if (data.isEmpty()) throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
+        //         return EntityProvider.writeEntry(contentType, uriInfo.getStartEntitySet(), data.get(0), EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build());}
+        //     catch (Throwable t) {throw new ODataException(t);}
+        // throw new ODataNotImplementedException();}
+
+    @Override public ODataResponse readEntityComplexProperty (GetComplexPropertyUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
+
+    @Override public ODataResponse readEntityLink (GetEntityLinkUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
+
+    @Override public ODataResponse readEntityLinks (GetEntitySetLinksUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
+
+    @Override public ODataResponse readEntityMedia (GetMediaResourceUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
+
     @Override public ODataResponse readEntitySet (GetEntitySetUriInfo uriInfo, String contentType) throws ODataException {
         if (uriInfo.getNavigationSegments().size()==0) try {
                 List<Map<String, Object>> data = getEntityData(String.format("select * from %s", uriInfo.getStartEntitySet().getName()));
@@ -100,15 +122,9 @@ public class AtomicSingleProcessor extends ODataSingleProcessor {
             catch (Throwable t) {throw new ODataException(t);}
         throw new ODataNotImplementedException();}
 
-    @Override public ODataResponse readEntity (GetEntityUriInfo uriInfo, String contentType) throws ODataException {
-        if (uriInfo.getNavigationSegments().size()==0) try {
-                List<String> pexps = new ArrayList<String>();
-                for (KeyPredicate p : uriInfo.getKeyPredicates()) pexps.add(String.format("\"%s\" = '%s'", p.getProperty().getName(), p.getLiteral()));
-                List<Map<String, Object>> data = getEntityData(String.format("select * from %s where %s", uriInfo.getStartEntitySet().getName(), pexps.toString().replaceAll(",", " and ").replaceAll("\\[", " ").replaceAll("]", " ")));
-                if (data.isEmpty()) throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
-                return EntityProvider.writeEntry(contentType, uriInfo.getStartEntitySet(), data.get(0), EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build());}
-            catch (Throwable t) {throw new ODataException(t);}
-        throw new ODataNotImplementedException();}
+    @Override public ODataResponse readEntitySimpleProperty (GetSimplePropertyUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
+
+    @Override public ODataResponse readEntitySimplePropertyValue (GetSimplePropertyUriInfo uriInfo, String contentType) throws ODataNotImplementedException {throw new ODataNotImplementedException();}
 
     @Override public ODataResponse createEntity (PostUriInfo uriInfo, InputStream content, String requestContentType, String contentType) throws ODataException {
         if (uriInfo.getNavigationSegments().size() > 0) throw new ODataNotImplementedException();

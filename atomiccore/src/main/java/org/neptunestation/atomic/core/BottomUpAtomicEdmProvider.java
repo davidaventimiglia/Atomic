@@ -106,7 +106,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
 	    super();
 	    this.entityType = e;
 	    setFromRole(r.getString(PKTABLE_NAME));
-	    setName(r.getString(PKCOLUMN_NAME));
+	    setName(r.getString(FKTABLE_NAME));
 	    setRelationship(new FullQualifiedName(r.getString(PKTABLE_SCHEM), a.getName()));
 	    setToRole(r.getString(FKTABLE_NAME));}}
 
@@ -201,7 +201,7 @@ public class BottomUpAtomicEdmProvider extends AtomicEdmProvider {
             setName(r.getString(TABLE_NAME));
             setDocumentation(makeDocumentation(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
             setProperties(makeProperties(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
-	    setNavigationProperties(makeNavigationProperties(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));
+	    setNavigationProperties(new ArrayList<NavigationProperty>());
             setKey(makeKey(m, r.getString(TABLE_CAT), r.getString(TABLE_SCHEM), r.getString(TABLE_NAME)));}}
 
     class AtomicEntityContainer extends EntityContainer {
