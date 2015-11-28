@@ -4,18 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.neptunestation</groupId>
-  <artifactId>atomic-standalone</artifactId>
+  <artifactId>atomic</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>AtomicStandalone</name>
-  <url>http://www.neptunestation.org/atomic-standalone</url>
-
-  <parent>
-    <groupId>org.neptunestation</groupId>
-    <artifactId>atomic</artifactId>
-    <version>1.0.0</version>
-  </parent>
+  <name>Atomic</name>
+  <url>http://www.neptunestation.org/atomic</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,7 +76,7 @@
     </dependency>
     <dependency>
       <groupId>org.neptunestation</groupId>
-      <artifactId>atomic-core</artifactId>
+      <artifactId>libatomic</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>
