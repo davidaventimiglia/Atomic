@@ -1,9 +1,0 @@
-# -*- mode: org; -*-
-
-#+STARTUP: hidestars
-#+STARTUP: odd
-#+STARTUP: 
-
-* TODO Add JavaDoc comments
-* TODO Fill out the README
-* TODO Stop challenging for auth when the database doesn't require it
