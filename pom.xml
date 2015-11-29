@@ -57,7 +57,6 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
       <version>7.0.52</version>
-      <!-- <scope>provided</scope> -->
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -76,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>org.neptunestation</groupId>
-      <artifactId>olingo2-jdbc-processor</artifactId>
+      <artifactId>jdbc-core</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>

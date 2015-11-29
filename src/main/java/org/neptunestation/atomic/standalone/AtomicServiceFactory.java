@@ -1,4 +1,4 @@
-package org.neptunestation.olingo.odata2.jdbc.processor.core;
+package org.neptunestation.atomic.standalone;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -8,6 +8,7 @@ import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
 import org.apache.olingo.odata2.api.processor.*;
+import org.neptunestation.olingo.odata2.jdbc.processor.core.*;
 
 public class AtomicServiceFactory extends ODataServiceFactory {
     public static final String DEBUG = "DEBUG";
@@ -41,9 +42,9 @@ public class AtomicServiceFactory extends ODataServiceFactory {
         String username = credentials.length>=1 ? credentials[0] : null;
         String password = credentials.length>=2 ? credentials[1] : null;
         try {
-            Class c = Class.forName(System.getProperty(AtomicEdmProvider.PROVIDER));
+            Class c = Class.forName(System.getProperty(JDBCEdmProvider.PROVIDER));
             Constructor ctor = c.getDeclaredConstructor(Properties.class, String.class, String.class);
             ctor.setAccessible(true);
-            AtomicEdmProvider provider = (AtomicEdmProvider)ctor.newInstance(System.getProperties(), username, password);
-            return createODataSingleProcessorService(provider, new AtomicSingleProcessor(System.getProperties(), username, password));}
+            JDBCEdmProvider provider = (JDBCEdmProvider)ctor.newInstance(System.getProperties(), username, password);
+            return createODataSingleProcessorService(provider, new JDBCSingleProcessor(System.getProperties(), username, password));}
         catch (Throwable t) {throw new ODataException(t);}}}

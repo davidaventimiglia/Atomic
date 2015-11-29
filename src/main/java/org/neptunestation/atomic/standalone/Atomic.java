@@ -9,8 +9,8 @@ import org.apache.catalina.*;
 import org.apache.catalina.deploy.*;
 import org.apache.catalina.startup.*;
 import org.apache.catalina.valves.*;
-import org.neptunestation.atomic.core.*;
 import org.neptunestation.filterpack.filters.*;
+import org.neptunestation.olingo.odata2.jdbc.processor.core.*;
 
 public class Atomic {
     private static boolean debug = false;

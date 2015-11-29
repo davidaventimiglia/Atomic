@@ -1,4 +1,4 @@
-package org.neptunestation.olingo.odata2.jdbc.processor.core;
+package org.neptunestation.atomic.standalone;
 
 import java.io.*;
 import java.util.*;
@@ -6,6 +6,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import org.apache.olingo.odata2.api.*;
 import org.apache.olingo.odata2.core.servlet.*;
+import org.neptunestation.olingo.odata2.jdbc.processor.core.*;
 
 public class AtomicServlet extends ODataServlet {
     public static String NOAUTH = "NOAUTH";
@@ -15,7 +16,7 @@ public class AtomicServlet extends ODataServlet {
     @Override public void init (ServletConfig config) throws ServletException {
         params.put(ODataServiceFactory.FACTORY_LABEL, AtomicServiceFactory.class.getName());
         System.setProperty(AtomicServiceFactory.DEBUG, "" + config.getInitParameter(AtomicServiceFactory.DEBUG));
-        System.setProperty(AtomicEdmProvider.PROVIDER, config.getInitParameter(AtomicEdmProvider.PROVIDER)!=null ? config.getInitParameter(AtomicEdmProvider.PROVIDER) : BottomUpAtomicEdmProvider.class.getName());
+        System.setProperty(JDBCEdmProvider.PROVIDER, config.getInitParameter(JDBCEdmProvider.PROVIDER)!=null ? config.getInitParameter(JDBCEdmProvider.PROVIDER) : NonRecursiveJDBCEdmProvider.class.getName());
         super.init(config);}
 
     @Override protected void service (final HttpServletRequest request, final HttpServletResponse response) throws IOException {
