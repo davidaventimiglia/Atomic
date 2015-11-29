@@ -76,7 +76,7 @@
     </dependency>
     <dependency>
       <groupId>org.neptunestation</groupId>
-      <artifactId>libatomic</artifactId>
+      <artifactId>olingo2-jdbc-processor</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>
