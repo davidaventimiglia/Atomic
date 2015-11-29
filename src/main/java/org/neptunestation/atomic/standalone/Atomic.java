@@ -18,6 +18,7 @@ public class Atomic {
     private static String jdbcUrl;
     private static int httpPort = 80;
     private static String contextPath;
+    private static String edmProvider;
     private static Tomcat tomcat;
     private static Context ctx;
     private static AccessLogValve log;
@@ -45,6 +46,7 @@ public class Atomic {
         System.out.println("jdbc-url: " + jdbcUrl);
         System.out.println("http-port: " + httpPort);
         System.out.println("context-path: " + contextPath);
+        System.out.println("edm-provider: " + edmProvider);
         System.out.println("debug: " + debug);
         System.out.println("server: " + tomcat.getServer());
         System.out.println("service: " + tomcat.getService());
@@ -57,11 +59,12 @@ public class Atomic {
                            "ATOMIC\n" +
                            "======\n" +
                            "\n" +
-                           "System Properties:\n" +
-                           "\tjdbcDriver - JDBC driver class name (default: none)\n" +
-                           "\tjdbcUrl - JDBC URL (default: none)\n" +
-                           "\thttpPort - HTTP Port (default: 80)\n" +
-                           "\tcontextPath - URL Context Path (default: '')\n" +
+                           "Properties:\n" +
+                           "\tjdbc-driver - JDBC driver class name (default: none)\n" +
+                           "\tjdbc-url - JDBC URL (default: none)\n" +
+                           "\thttp-port - HTTP Port (default: 80)\n" +
+                           "\tcontext-path - URL Context Path (default: '')\n" +
+                           "\tedm-provider - EDM Provider (default: 'org.neptunestation.olingo.odata2.jdbc.processor.core.NonRecursiveJDBCEdmProvider')\n" +
                            "\tdebug - Debug output in [true, false] (default: false)\n" +
                            "\n" +
                            "Commands:\n" +
@@ -81,6 +84,7 @@ public class Atomic {
 	    try {httpPort = Integer.parseInt(System.getProperty("http-port")==null ? "80" : System.getProperty("http-port"));}
 	    catch (Throwable t) {System.err.println("The 'http-port' system property must be an integer.");}
 	    contextPath = System.getProperty("context-path")==null ? "" : System.getProperty("context-path");
+	    edmProvider = System.getProperty("edm-provider")==null ? "org.neptunestation.olingo.odata2.jdbc.processor.core.NonRecursiveJDBCEdmProvider" : System.getProperty("edm-provider");
 	    try {debug = Boolean.parseBoolean(System.getProperty("debug"));}
 	    catch (Throwable t) {System.err.println("The 'debug' system property must have a value in [true, false].");}
 
@@ -118,6 +122,7 @@ public class Atomic {
 	    Tomcat.addServlet(ctx, "atomic", new AtomicServlet());
 	    ctx.addServletMapping("/atomic/*", "atomic");
 	    ctx.addServletMapping("/atomic.debug/*", "atomic");
+	    ctx.addParameter(JDBCEdmProvider.PROVIDER, edmProvider);
 
 	    Tomcat.addServlet(ctx, "xslt", new  HttpServlet() {
 		    protected void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
