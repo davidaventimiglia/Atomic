@@ -21,3 +21,4 @@ tomcat.*
 atomic.*
 bootstrap.xsl
 test.*
+.idea
