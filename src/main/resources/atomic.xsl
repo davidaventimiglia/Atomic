@@ -58,10 +58,7 @@
   </xsl:template>
 
   <xsl:template match="a:entry" mode="table-header">
-    <tr>
-      <td><strong>Select</strong></td>
-      <xsl:apply-templates select="a:content/m:properties" mode="table-header"/>
-    </tr>
+    <tr><td><strong>Select</strong></td><xsl:apply-templates select="a:content/m:properties" mode="table-header"/></tr>
   </xsl:template>
 
   <xsl:template match="d:*" mode="table-header">
@@ -69,12 +66,7 @@
   </xsl:template>
 
   <xsl:template match="a:entry" mode="table-data">
-    <tr>
-      <td>
-        <a href="{a:link/@href}">Link</a>
-      </td>
-      <xsl:apply-templates select="a:content/m:properties" mode="table-data"/>
-    </tr>
+    <tr><td><a href="{a:link/@href}">Link</a></td><xsl:apply-templates select="a:content/m:properties" mode="table-data"/></tr>
   </xsl:template>
 
   <xsl:template match="/a:feed/a:entry/a:content/m:properties/d:*[1]" mode="table-data">
@@ -87,15 +79,22 @@
 
   <!-- Entry Detail -->
 
+  <xsl:template match="entry">
+    <li><xsl:value-of select="title"/></li>
+    <li><ul><xsl:apply-templates select="content/m:properties"/></ul></li>
+  </xsl:template>
+
   <xsl:template match="/a:entry">
     <html>
       <head>
       </head>
       <body>
 	<form action="{link/@href}">
-	  <table border="1">
-            <xsl:apply-templates select="a:content/m:properties" mode="entry-detail"/>
-	  </table>
+	  <ul>
+            <xsl:apply-templates select="a:content/m:properties"
+				 mode="entry-detail"/>
+	    <xsl:apply-templates select="a:link"/>
+	  </ul>
 	  <input type="hidden" name="method" value="put"/>
 	  <input type="submit" value="Submit"/>
 	</form>
@@ -103,15 +102,19 @@
     </html>
   </xsl:template>
 
+  <xsl:template match="a:link">
+    <li><xsl:apply-templates select="m:inline/a:feed/a:entry"/></li>
+  </xsl:template>
+
+  <xsl:template match="a:entry">
+    <ul>
+      <xsl:apply-templates select="a:content/m:properties"
+			   mode="entry-detail"/>
+    </ul>
+  </xsl:template>
+
   <xsl:template match="d:*" mode="entry-detail">
-    <tr>
-      <td>
-        <xsl:value-of select="local-name()"/>
-      </td>
-      <td>
-        <input type="text" name="{name()}" value="{text()}"/>
-      </td>
-    </tr>
+    <li><xsl:value-of select="local-name()"/>:  <input type="text" name="{name()}" value="{text()}"/></li>
   </xsl:template>
 
 </xsl:stylesheet> 
