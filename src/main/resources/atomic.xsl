@@ -113,6 +113,16 @@
     </ul>
   </xsl:template>
 
+  <xsl:template match="a:feed/a:entry/a:content/m:properties">
+    <table>
+    </table>
+  </xsl:template>
+
+  <xsl:template match="a:feed/a:entry/a:content/m:properties/d:*">
+    <tr><td><xsl:value-of
+    select="local-name()"/></td><td><xsl:value-of select="text()"/></td></tr>
+  </xsl:template>
+
   <xsl:template match="d:*" mode="entry-detail">
     <li><xsl:value-of select="local-name()"/>:  <input type="text" name="{name()}" value="{text()}"/></li>
   </xsl:template>
