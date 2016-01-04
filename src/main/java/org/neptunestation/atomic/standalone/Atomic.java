@@ -56,12 +56,7 @@ public class Atomic {
         System.out.println("jdbc-url: " + jdbcUrl);
         System.out.println("http-port: " + httpPort);
         System.out.println("context-path: " + contextPath);
-        System.out.println("edm-provider: " + edmProvider);
         System.out.println("debug: " + debug);
-        System.out.println("server: " + tomcat.getServer());
-        System.out.println("service: " + tomcat.getService());
-        System.out.println("engine: " + tomcat.getEngine());
-        System.out.println("host: " + tomcat.getHost());
         tomcat.getServer().await();}
 
     public void printUsage (String[] args) {

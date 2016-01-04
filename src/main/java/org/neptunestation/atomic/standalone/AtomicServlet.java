@@ -21,7 +21,7 @@ public class AtomicServlet extends ODataServlet {
 
     @Override protected void service (final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         if ("true".equalsIgnoreCase(getInitParameter(AtomicServlet.NOAUTH)+"")) {super.service(request, response); return;}
-        if (request.getHeader("Authorization")!=null) {super.service(request, response); System.err.println(String.format("origRes.getContentType():  %s", response.getContentType())); return;}
+        if (request.getHeader("Authorization")!=null) {super.service(request, response); return;}
         response.setHeader("WWW-Authenticate", "BASIC realm = \"Atomic\"");
         response.sendError(response.SC_UNAUTHORIZED);}
 
