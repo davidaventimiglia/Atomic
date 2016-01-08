@@ -16,7 +16,7 @@ public class AtomicServlet extends ODataServlet {
     @Override public void init (ServletConfig config) throws ServletException {
         params.put(ODataServiceFactory.FACTORY_LABEL, AtomicServiceFactory.class.getName());
         System.setProperty(AtomicServiceFactory.DEBUG, "" + config.getInitParameter(AtomicServiceFactory.DEBUG));
-        System.setProperty(JDBCEdmProvider.PROVIDER, config.getInitParameter(JDBCEdmProvider.PROVIDER)!=null ? config.getInitParameter(JDBCEdmProvider.PROVIDER) : NonRecursiveJDBCEdmProvider.class.getName());
+        System.setProperty(JDBCEdmProvider.PROVIDER, config.getInitParameter(JDBCEdmProvider.PROVIDER)!=null ? config.getInitParameter(JDBCEdmProvider.PROVIDER) : JDBCEdmProvider.class.getName());
         super.init(config);}
 
     @Override protected void service (final HttpServletRequest request, final HttpServletResponse response) throws IOException {
