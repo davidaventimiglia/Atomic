@@ -69,3 +69,5 @@
 * DONE Merge JDBCEdmProvider and NonRecursivejdbcedmprovider.
   CLOCK: [2016-01-07 Thu 19:21]--[2016-01-07 Thu 20:03] =>  0:42
 * TODO Fix semanticdb handling of Java package imports.
+* TODO Autoconfiscate Atomic.
+* TODO Make a validator for EdmProvider.
