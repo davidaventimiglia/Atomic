@@ -71,3 +71,8 @@
 * TODO Fix semanticdb handling of Java package imports.
 * TODO Autoconfiscate Atomic.
 * TODO Make a validator for EdmProvider.
+  CLOCK: [2016-01-08 Fri 07:46]--[2016-01-08 Fri 08:26] =>  0:40
+
+* TODO Insert a model layer right below Olingo Entity Data Model types.
+  CLOCK: [2016-01-09 Sat 17:13]--[2016-01-09 Sat 17:59] =>  0:46
+
