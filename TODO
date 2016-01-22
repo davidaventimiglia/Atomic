@@ -76,3 +76,23 @@
 * TODO Insert a model layer right below Olingo Entity Data Model types.
   CLOCK: [2016-01-09 Sat 17:13]--[2016-01-09 Sat 17:59] =>  0:46
 
+* TODO Use new Java features.
+*** Java 5
+***** Generics
+***** Enhanced for Loop
+***** Varargs
+***** Static imports
+***** Annotations
+*** Java 6
+***** new Collections features
+***** JDBC4
+******* Auto-loading driver
+******* Connection management
+******* New exceptions
+*** Java 7
+***** Diamond operator
+***** Try-with-resources
+***** Numeric literals with underscores
+*** Java 8
+***** Lambda expressions
+
