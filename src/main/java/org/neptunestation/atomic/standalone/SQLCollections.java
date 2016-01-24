@@ -8,6 +8,8 @@ import java.sql.*;
 import java.util.*;
 import javax.sql.*;
 import javax.sql.rowset.*;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.*;
 import org.stringtemplate.v4.*;
 
 public abstract class SQLCollections {
@@ -46,8 +48,11 @@ public abstract class SQLCollections {
 	// for (Map<String, String> m : asIterable(asIterable(s.executeQuery(args[4])))) {Properties p = new Properties(); p.putAll(m); p.store(System.out, "Made with Atomic");}
 	// System.out.println();
 
+	Transformer t = TransformerFactory.newInstance().newTransformer(new StreamSource(SQLCollections.class.getResourceAsStream("/atomic2.xsl")));
 	for (Properties p : asIterable(asIterable(s.executeQuery(args[4])))) {
-	    p.storeToXML(System.out, "Made with Atomic");
+	    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	    p.storeToXML(buffer, "Made with Atomic");
+	    t.transform(new StreamSource(new ByteArrayInputStream(buffer.toByteArray())), new StreamResult(System.out));
 	    System.out.print(System.getProperty("record.separator", ""));}
 	
 	// System.out.println("4:  Maps");
