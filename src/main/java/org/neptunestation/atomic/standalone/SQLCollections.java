@@ -2,11 +2,13 @@ package org.neptunestation.atomic.standalone;
 
 import java.beans.*;
 import java.beans.Introspector.*;
+import java.io.*;
 import java.lang.reflect.*;
 import java.sql.*;
 import java.util.*;
 import javax.sql.*;
 import javax.sql.rowset.*;
+import org.stringtemplate.v4.*;
 
 public abstract class SQLCollections {
     public static Map<String, Object> introspect(Object obj) throws Exception {
@@ -16,15 +18,69 @@ public abstract class SQLCollections {
 	return result;}
 
     public static void main (String[] args) throws ClassNotFoundException, SQLException, Exception {
-	Class.forName(args[0]);
-	RowSetFactory aFactory = RowSetProvider.newFactory();
-	JdbcRowSet jrs = aFactory.createJdbcRowSet();
-	jrs.setCommand(args[4]);
-	jrs.setUrl(args[1]);
-	jrs.setUsername(args[2]);
-	jrs.setPassword(args[3]);
-	for (Map<String, SQLValue> m : asIterable(jrs)) System.out.println(m);
-	for (Map<String, SQLValue> m : asIterable(jrs)) for (Object v : m.values()) {System.out.println(introspect(v)); return;}}
+	// Use the constructor that accepts a Reader
+	// STGroup group = new STGroupString("group simple; vardef(type,name) ..."); // templates from abovenew StringReader(templates));
+	// ST t = group.getInstanceOf("vardef");
+	// t.add("type", "int");
+	// t.add("name", "foo");
+	// System.out.println(t);
+
+	java.sql.Statement s = DriverManager.getConnection(args[1], args[2], args[3]).createStatement();
+
+	// System.out.println("1:  RowSets");
+	// {
+	//     JdbcRowSet jrs = aFactory.createJdbcRowSet();
+	//     jrs.setCommand(args[4]);
+	//     jrs.setUrl(args[1]);
+	//     jrs.setUsername(args[2]);
+	//     jrs.setPassword(args[3]);
+	//     for (Map<String, SQLValue> m : asIterable(jrs)) System.out.println(m);
+	//     for (Map<String, SQLValue> m : asIterable(jrs)) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}}
+	// System.out.println();
+
+	// System.out.println("2:  WebRowSets");
+	// RowSetProvider.newFactory().createWebRowSet().writeXml(s.executeQuery(args[4]), System.out);
+	// System.out.println();
+
+	// System.out.println("3:  Properties");
+	// for (Map<String, String> m : asIterable(asIterable(s.executeQuery(args[4])))) {Properties p = new Properties(); p.putAll(m); p.store(System.out, "Made with Atomic");}
+	// System.out.println();
+
+	for (Properties p : asIterable(asIterable(s.executeQuery(args[4])))) {
+	    p.storeToXML(System.out, "Made with Atomic");
+	    System.out.print(System.getProperty("record.separator", ""));}
+	
+	// System.out.println("4:  Maps");
+	// for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) System.out.println(m);
+	// System.out.println();
+
+	// System.out.println("5:  JavaBeans");
+	// for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}
+	// System.out.println();
+    }
+
+    public static interface SQLValue {
+	String getCatalogName () throws SQLException;
+	String getColumnClassName () throws SQLException;
+	int getColumnCount () throws SQLException;
+	int getColumnDisplaySize () throws SQLException;
+	String getColumnLabel () throws SQLException;
+	String getColumnName () throws SQLException;
+	int getColumnType () throws SQLException;
+	String getColumnTypeName () throws SQLException;
+	int getPrecision () throws SQLException;
+	int getScale () throws SQLException;
+	String getSchemaName () throws SQLException;
+	String getTableName () throws SQLException;
+	boolean isAutoIncrement () throws SQLException;
+	boolean isCaseSensitive () throws SQLException;
+	boolean isCurrency () throws SQLException;
+	boolean isDefinitelyWritable () throws SQLException;
+	int isNullable () throws SQLException;
+	boolean isReadOnly () throws SQLException;
+	boolean isSearchable () throws SQLException;
+	boolean isSigned () throws SQLException;
+	boolean isWritable () throws SQLException;}
 
     public static class SQLValueImpl implements SQLValue {
 	int i;
@@ -51,15 +107,27 @@ public abstract class SQLCollections {
 	public boolean isSigned () throws SQLException {return r.getMetaData().isSigned(i);}
 	public boolean isWritable () throws SQLException {return r.getMetaData().isWritable(i);}
 	public String getData () throws SQLException {return r.getString(i);}
+	public SQLValueImpl () {}
 	public SQLValueImpl (int i, ResultSet r) {
 	    this.r = r;
 	    this.i = i;}
 	public String toString () throws IllegalStateException {
-	    try {return String.format("\"%s\"", r.getString(i));}
+	    try {return r.getString(i);}
 	    catch (Exception e) {throw new IllegalStateException(e);}}}
 
-    public static Iterable<Map<String, SQLValue>> asIterable (final RowSet r) throws SQLException {
-	r.execute();
+    public static Iterable<Properties> asIterable (final Iterable<Map<String, SQLValue>> it) {
+	return new Iterable<Properties>() {
+	    @Override public Iterator<Properties> iterator () {
+		return new Iterator<Properties>() {
+		    final Iterator<Map<String, SQLValue>> proxy = it.iterator();
+		    @Override public boolean hasNext () {return proxy.hasNext();}
+		    @Override public Properties next () {
+			Properties p = new Properties();
+		    	for (Map.Entry<String, SQLValue> e : proxy.next().entrySet()) p.setProperty(e.getKey(), e.getValue().toString());
+		    	return p;}};}};}
+
+    public static Iterable<Map<String, SQLValue>> asIterable (final ResultSet r) throws SQLException {
+	if (r instanceof RowSet) ((RowSet)r).execute();
 	return
 	    (Iterable<Map<String, SQLValue>>)
 	    Proxy

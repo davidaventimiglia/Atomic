@@ -4,6 +4,7 @@
 #+STARTUP: odd
 #+STARTUP: 
 
+* TODO Write a module to get a JDBC ResultSet as a WebRowSet XML.
 * TODO Add JavaDoc comments
 * TODO Fill out the README
 * TODO Tomcat config for db
@@ -76,6 +77,49 @@
 * TODO Insert a model layer right below Olingo Entity Data Model types.
   CLOCK: [2016-01-09 Sat 17:13]--[2016-01-09 Sat 17:59] =>  0:46
 
+* TODO Explore different ways of transforming SQL data into RESTful representations.
+  1. WebRowSet XML styled with XSLT directly into Atom entries, with
+    <data> content.  No OData at all.
+     - not flexible
+     - skip
+  2. WebRowSet XML styled with XSLT into just the <data> content, and
+     then inserted into Atom entries generated via StringTemplate.
+     Should produce the exact same result as 1 above.  No OData at
+     all.
+     - flexible
+     - do not skip
+  3. WebRowSet XML styled with XSLT directly into Atom entries, with
+     Odata <properties> content.  Definitely OData.
+     - not flexible
+     - skip
+  4. WebRowSet XML styed with XSLT into just the OData <properties>
+     content, and then inserted into Atom entries generated via
+     StringTemplate.  Definitely OData.
+     - flexible
+     - do not skip
+  5. WebRowSet XML styled with XSLT directly into ODATA json
+     representations.  Definitely ODATA.
+     - not flexible
+     - skip
+  6. WebRowSet XML styled with XSLT into just the ODATA value data,
+     and then inserted into a full ODATA representation via
+     StringTemplate.
+     - flexible
+     - do not skip
+  7. Return just the WebRowSet XML.  No Atom at all.
+     - do not skip
+  8. Java data rendered as java.util.Properties do, then inserted into
+     Atom entries generated via StringTemplate.
+     - do not skip
+  9. Java data rendered directly into ODATA entries via
+     StringTemplate.
+     - not flexible
+     - skip
+  10. Java data rendered first into OData <properties> content, then
+      rendered into OData entries, all using StringTemplate, but in a
+      two-step process.
+      - flexible
+      - do not skip
 * TODO Use new Java features.
 *** Java 5
 ***** Generics
