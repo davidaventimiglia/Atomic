@@ -29,39 +29,46 @@ public abstract class SQLCollections {
 
 	java.sql.Statement s = DriverManager.getConnection(args[1], args[2], args[3]).createStatement();
 
-	// System.out.println("1:  RowSets");
-	// {
-	//     JdbcRowSet jrs = aFactory.createJdbcRowSet();
-	//     jrs.setCommand(args[4]);
-	//     jrs.setUrl(args[1]);
-	//     jrs.setUsername(args[2]);
-	//     jrs.setPassword(args[3]);
-	//     for (Map<String, SQLValue> m : asIterable(jrs)) System.out.println(m);
-	//     for (Map<String, SQLValue> m : asIterable(jrs)) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}}
-	// System.out.println();
+	System.out.println("1:  RowSets");
+	{
+	    JdbcRowSet jrs = RowSetProvider.newFactory().createJdbcRowSet();
+	    jrs.setCommand(args[4]);
+	    jrs.setUrl(args[1]);
+	    jrs.setUsername(args[2]);
+	    jrs.setPassword(args[3]);
+	    for (Map<String, SQLValue> m : asIterable(jrs)) System.out.println(m);
+	    for (Map<String, SQLValue> m : asIterable(jrs)) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}}
+	System.out.println();
 
-	// System.out.println("2:  WebRowSets");
-	// RowSetProvider.newFactory().createWebRowSet().writeXml(s.executeQuery(args[4]), System.out);
-	// System.out.println();
+	System.out.println("3:  Properties");
+	for (Properties p : asIterable(asIterable(s.executeQuery(args[4])))) p.store(System.out, "Made with Atomic");
+	System.out.println();
 
-	// System.out.println("3:  Properties");
-	// for (Map<String, String> m : asIterable(asIterable(s.executeQuery(args[4])))) {Properties p = new Properties(); p.putAll(m); p.store(System.out, "Made with Atomic");}
-	// System.out.println();
-
-	Transformer t = TransformerFactory.newInstance().newTransformer(new StreamSource(SQLCollections.class.getResourceAsStream("/atomic2.xsl")));
-	for (Properties p : asIterable(asIterable(s.executeQuery(args[4])))) {
+	{
+	    Transformer t = TransformerFactory
+		.newInstance()
+		.newTransformer(new StreamSource(SQLCollections.class.getResourceAsStream("/atomic2.xsl")));
 	    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	    p.storeToXML(buffer, "Made with Atomic");
-	    t.transform(new StreamSource(new ByteArrayInputStream(buffer.toByteArray())), new StreamResult(System.out));
-	    System.out.print(System.getProperty("record.separator", ""));}
-	
-	// System.out.println("4:  Maps");
-	// for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) System.out.println(m);
-	// System.out.println();
+	    RowSetProvider.newFactory().createWebRowSet().writeXml(s.executeQuery(args[4]), buffer);
+	    t.transform(new StreamSource(new ByteArrayInputStream(buffer.toByteArray())), new StreamResult(System.out));}
 
-	// System.out.println("5:  JavaBeans");
-	// for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}
-	// System.out.println();
+	{
+	    Transformer t = TransformerFactory
+		.newInstance()
+		.newTransformer(new StreamSource(SQLCollections.class.getResourceAsStream("/atomic2.xsl")));
+	    for (Properties p : asIterable(asIterable(s.executeQuery(args[4])))) {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		// p.storeToXML(System.out, "Made with Atomic");}}
+		p.storeToXML(buffer, "Made with Atomic");
+		t.transform(new StreamSource(new ByteArrayInputStream(buffer.toByteArray())), new StreamResult(System.out));}}
+	
+	System.out.println("4:  Maps");
+	for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) System.out.println(m);
+	System.out.println();
+
+	System.out.println("5:  JavaBeans");
+	for (Map<String, SQLValue> m : asIterable(s.executeQuery(args[4]))) {for (Object v : m.values()) {System.out.println(introspect(v)); break;} break;}
+	System.out.println();
     }
 
     public static interface SQLValue {
